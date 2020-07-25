@@ -40,4 +40,9 @@ public interface Queue<E> {
      * @return is empty
      */
     boolean isEmpty();
+
+    /**
+     * Clear all elements
+     */
+    void clear();
 }

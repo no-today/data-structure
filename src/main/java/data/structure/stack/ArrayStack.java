@@ -9,7 +9,7 @@ import data.structure.list.ArrayList;
  */
 public class ArrayStack<E> implements Stack<E> {
 
-    private ArrayList<E> arrayList;
+    private final ArrayList<E> arrayList;
 
     public ArrayStack() {
         this.arrayList = new ArrayList<>();

@@ -9,7 +9,7 @@ import data.structure.list.LinkedList;
  */
 public class LinkedQueue<E> implements Queue<E> {
 
-    private LinkedList<E> linkedList;
+    private final LinkedList<E> linkedList;
 
     public LinkedQueue() {
         this.linkedList = new LinkedList<>();
@@ -38,5 +38,10 @@ public class LinkedQueue<E> implements Queue<E> {
     @Override
     public boolean isEmpty() {
         return linkedList.isEmpty();
+    }
+
+    @Override
+    public void clear() {
+        linkedList.clear();
     }
 }

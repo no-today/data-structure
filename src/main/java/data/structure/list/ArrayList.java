@@ -14,6 +14,11 @@ public class ArrayList<E> implements List<E> {
     private static final int DEFAULT_CAPACITY = 8;
 
     /**
+     * Shrinkage factor < 4/1
+     */
+    private static final float SHRINKAGE_COEFFICIENT = 0.25F;
+
+    /**
      * Element domain
      */
     private E[] elements;
@@ -21,17 +26,13 @@ public class ArrayList<E> implements List<E> {
     /**
      * Initial capacity, Total capacity
      */
-    private int initCapacity, capacity;
+    private final int initCapacity;
+    private int capacity;
 
     /**
      * Effective element
      */
     private int size;
-
-    /**
-     * Shrinkage factor < 4/1
-     */
-    private static final float SHRINKAGE_COEFFICIENT = 0.25F;
 
     public ArrayList() {
         capacity = initCapacity = DEFAULT_CAPACITY;
