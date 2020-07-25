@@ -1,6 +1,6 @@
-package io.github.no.today.data.structure.list;
+package data.structure.list;
 
-import io.github.no.today.data.structure.List;
+import data.structure.List;
 
 /**
  * @author no-today

@@ -1,7 +1,7 @@
-package io.github.no.today.data.structure.queue;
+package data.structure.queue;
 
-import io.github.no.today.data.structure.Queue;
-import io.github.no.today.data.structure.list.LinkedList;
+import data.structure.Queue;
+import data.structure.list.LinkedList;
 
 /**
  * @author no-today

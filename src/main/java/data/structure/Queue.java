@@ -1,4 +1,4 @@
-package io.github.no.today.data.structure;
+package data.structure;
 
 /**
  * @author no-today

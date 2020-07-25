@@ -1,7 +1,7 @@
-package io.github.no.today.data.structure.stack;
+package data.structure.stack;
 
-import io.github.no.today.data.structure.Stack;
-import io.github.no.today.data.structure.list.ArrayList;
+import data.structure.Stack;
+import data.structure.list.ArrayList;
 
 /**
  * @author no-today
