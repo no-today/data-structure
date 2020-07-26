@@ -2,6 +2,12 @@ package data.structure.queue;
 
 import data.structure.Queue;
 
+/**
+ * 循环数组实现 最后一个元素不可用
+ * <p>
+ * 队列为空: head == tail
+ * 队列已满: (tail + 1) % capacity == head
+ */
 public class ArrayQueue<E> implements Queue<E> {
 
     /**

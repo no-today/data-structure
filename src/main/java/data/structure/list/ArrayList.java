@@ -238,6 +238,11 @@ public class ArrayList<E> implements List<E> {
         return capacity;
     }
 
+    public void swap(int i, int j) {
+        E ej = set(i, get(j));
+        set(j, ej);
+    }
+
     /**
      * Detect index out of bounds
      *
