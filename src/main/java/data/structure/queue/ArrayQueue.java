@@ -65,7 +65,7 @@ public class ArrayQueue<E> implements Queue<E> {
             throw new IndexOutOfBoundsException();
         }
 
-        return elements[head];
+        return elements[head % elements.length];
     }
 
     @Override
