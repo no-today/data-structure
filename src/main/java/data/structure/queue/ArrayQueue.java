@@ -18,22 +18,16 @@ public class ArrayQueue<E> implements Queue<E> {
     private E[] elements;
 
     /**
-     * Total capacity, is capacity
-     */
-    private int capacity;
-
-    /**
      * head :下一个出队的元素位置
      * tail :下一个入队的元素位置
      */
-    private int head, tail = 0;
+    private int head, tail, count = 0;
 
     public ArrayQueue() {
         this(DEFAULT_CAPACITY);
     }
 
     public ArrayQueue(int capacity) {
-        this.capacity = capacity + 1;
         this.elements = (E[]) new Object[capacity];
     }
 
@@ -47,31 +41,37 @@ public class ArrayQueue<E> implements Queue<E> {
     public void enqueue(E element) {
         resizeCapacity();
 
-        elements[tail % capacity] = element;
+        elements[tail % elements.length] = element;
         tail++;
+        count++;
     }
 
     @Override
     public E dequeue() {
         if (isEmpty()) {
-            return null;
+            throw new IndexOutOfBoundsException();
         }
 
-        E element = elements[head];
-        elements[head] = null;
+        E element = elements[head % elements.length];
+        elements[head % elements.length] = null;
         head++;
+        count--;
 
         return element;
     }
 
     @Override
     public E front() {
+        if (isEmpty()) {
+            throw new IndexOutOfBoundsException();
+        }
+
         return elements[head];
     }
 
     @Override
     public int size() {
-        return tail;
+        return count;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class ArrayQueue<E> implements Queue<E> {
     @Override
     public void clear() {
         for (int i = head; i < tail; i++) {
-            elements[i % capacity] = null;
+            elements[i % elements.length] = null;
         }
 
         head = tail = 0;
@@ -90,8 +90,8 @@ public class ArrayQueue<E> implements Queue<E> {
 
     private void resizeCapacity() {
         // 队列已满, 扩容
-        if ((tail + 1) % capacity == head) {
-            capacity = capacity * 2;
+        if ((tail + 1) % elements.length == head) {
+            int capacity = elements.length * 2;
 
             E[] newElements = (E[]) new Object[capacity];
             System.arraycopy(elements, head, newElements, 0, tail);

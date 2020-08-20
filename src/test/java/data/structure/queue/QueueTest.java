@@ -21,18 +21,12 @@ class QueueTest {
     }
 
     @Test
-    void dequeue() {
-        assertEquals(String.valueOf(0), queue.dequeue());
-    }
-
-    @Test
-    void front() {
-        assertEquals(String.valueOf(0), queue.front());
-    }
-
-    @Test
-    void size() {
-        assertEquals(SIZE, queue.size());
+    void test() {
+        for (int i = 0; i < SIZE; i++) {
+            assertEquals(String.valueOf(i), queue.front());
+            assertEquals(String.valueOf(i), queue.dequeue());
+            assertEquals(queue.size(), SIZE - (i + 1));
+        }
     }
 
     @Test
