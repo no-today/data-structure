@@ -19,9 +19,9 @@ public class ArrayQueue<E> implements Queue<E> {
 
     /**
      * head :下一个出队的元素位置
-     * tail :下一个入队的元素位置
+     * tail : (headIndex + count - 1) mod capacity
      */
-    private int head, tail, count = 0;
+    private int head, count = 0;
 
     public ArrayQueue() {
         this(DEFAULT_CAPACITY);
@@ -41,8 +41,7 @@ public class ArrayQueue<E> implements Queue<E> {
     public void enqueue(E element) {
         resizeCapacity();
 
-        elements[tail % elements.length] = element;
-        tail++;
+        elements[(head + count) % elements.length] = element;
         count++;
     }
 
@@ -76,25 +75,25 @@ public class ArrayQueue<E> implements Queue<E> {
 
     @Override
     public boolean isEmpty() {
-        return head == tail;
+        return count == 0;
     }
 
     @Override
     public void clear() {
-        for (int i = head; i < tail; i++) {
+        for (int i = head; i < head + count; i++) {
             elements[i % elements.length] = null;
         }
 
-        head = tail = 0;
+        head = count = 0;
     }
 
     private void resizeCapacity() {
         // 队列已满, 扩容
-        if ((tail + 1) % elements.length == head) {
+        if (count == elements.length) {
             int capacity = elements.length * 2;
 
             E[] newElements = (E[]) new Object[capacity];
-            System.arraycopy(elements, head, newElements, 0, tail);
+            System.arraycopy(elements, head, newElements, 0, count);
             elements = newElements;
         }
     }
