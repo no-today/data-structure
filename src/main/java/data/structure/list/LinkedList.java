@@ -83,12 +83,7 @@ public class LinkedList<E> implements List<E> {
     public E remove(int index) {
         checkIndexOutBounds(index);
 
-        Node<E> firstTemp = head;
-        for (int i = 0; i < index; i++) {
-            firstTemp = firstTemp.next;
-        }
-
-        return remove(firstTemp);
+        return remove(index > length / 2 ? fromLastStart(index) : fromFirstStart(index));
     }
 
     @Override
@@ -155,12 +150,7 @@ public class LinkedList<E> implements List<E> {
     public E set(int index, E element) {
         checkIndexOutBounds(index);
 
-        Node<E> firstTemp = head;
-        for (int i = 0; i < index; i++) {
-            firstTemp = firstTemp.next;
-        }
-
-        firstTemp.element = element;
+        (index > length / 2 ? fromLastStart(index) : fromFirstStart(index)).element = element;
 
         return element;
     }
@@ -169,12 +159,43 @@ public class LinkedList<E> implements List<E> {
     public E get(int index) {
         checkIndexOutBounds(index);
 
-        Node<E> firstTemp = head;
-        for (int i = 0; i < index; i++) {
-            firstTemp = firstTemp.next;
+        return index > length / 2 ? fromLastStart(index).element : fromFirstStart(index).element;
+    }
+
+    /**
+     * 从后往前找
+     *
+     * @param index index
+     * @return node
+     */
+    private Node<E> fromLastStart(int index) {
+        Node<E> tailTemp = this.tail;
+
+        int i = length - 1;
+        while (i > index) {
+            tailTemp = tailTemp.pre;
+            i--;
         }
 
-        return firstTemp.element;
+        return tailTemp;
+    }
+
+    /**
+     * 从前往后找
+     *
+     * @param index index
+     * @return node
+     */
+    private Node<E> fromFirstStart(int index) {
+        Node<E> headTemp = this.head;
+
+        int i = 0;
+        while (i < index) {
+            headTemp = headTemp.next;
+            i++;
+        }
+
+        return headTemp;
     }
 
     /**
@@ -360,7 +381,7 @@ public class LinkedList<E> implements List<E> {
 
     private void checkIndexOutBounds(int index) {
         if (index < 0 || index > length) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException(String.valueOf(index));
         }
     }
 

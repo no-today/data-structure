@@ -10,17 +10,19 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.UUID;
 
 @State(value = Scope.Benchmark)
-public class BinaryTreeTest {
+public class AVLTreeTest {
 
-    BinarySearchTree<String> tree;
+    AVLTree<String> tree;
     ArrayList<String> words;
+    Random rand = new Random();
 
     @Setup
     public void init() throws Exception {
-        tree = new BinarySearchTree<>();
+        tree = new AVLTree<>();
         words = new ArrayList<>();
 
         ReadFileWord.read(line -> {
@@ -51,7 +53,7 @@ public class BinaryTreeTest {
     }
 
     public static void main(String[] args) throws Exception {
-        String simpleName = BinaryTreeTest.class.getSimpleName();
+        String simpleName = AVLTreeTest.class.getSimpleName();
         Options options = new OptionsBuilder()
                 .include(simpleName)
                 .output(simpleName + ".log")

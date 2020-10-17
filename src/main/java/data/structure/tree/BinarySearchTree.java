@@ -1,7 +1,7 @@
 package data.structure.tree;
 
-import data.structure.Stack;
 import data.structure.Queue;
+import data.structure.Stack;
 import data.structure.queue.LinkedQueue;
 import data.structure.stack.ArrayStack;
 
@@ -59,6 +59,8 @@ public class BinarySearchTree<E extends Comparable<E>> {
             node.left = add(node.left, e);
         } else if (e.compareTo(node.e) > 0) {
             node.right = add(node.right, e);
+        } else {
+            node.e = e;
         }
 
         /*
@@ -202,6 +204,9 @@ public class BinarySearchTree<E extends Comparable<E>> {
      * 最小值
      */
     public E min() {
+        if (isEmpty()) {
+            return null;
+        }
         return min(root).e;
     }
 
@@ -216,6 +221,9 @@ public class BinarySearchTree<E extends Comparable<E>> {
      * 最大值
      */
     public E max() {
+        if (isEmpty()) {
+            return null;
+        }
         return max(root).e;
     }
 
@@ -248,11 +256,12 @@ public class BinarySearchTree<E extends Comparable<E>> {
         }
 
         E min = min();
-        removeMin(root);
+        root = removeMin(root);
         return min;
     }
 
     private Node<E> removeMin(Node<E> node) {
+        // 删除左边, 用右边顶替
         if (node.left == null) {
             Node<E> right = node.right;
             node.right = null;
@@ -272,11 +281,12 @@ public class BinarySearchTree<E extends Comparable<E>> {
         }
 
         E max = max();
-        removeMax(root);
+        root = removeMax(root);
         return max;
     }
 
     private Node<E> removeMax(Node<E> node) {
+        // 删除右边, 用左边顶替
         if (node.right == null) {
             Node<E> left = node.left;
             node.left = null;
@@ -292,7 +302,7 @@ public class BinarySearchTree<E extends Comparable<E>> {
      * 删除指定节点
      */
     public boolean remove(E e) {
-        return remove(root, e) != null;
+        return (root = remove(root, e)) != null;
     }
 
     private Node<E> remove(Node<E> node, E e) {
@@ -323,15 +333,11 @@ public class BinarySearchTree<E extends Comparable<E>> {
                 length--;
                 return left;
             }
-            /*
-             * 得到被删除节点的右侧最小节点
-             * 删除被删除节点的右侧最小节点
-             */
+
+            // 得到目标节点的右侧最小节点
             Node<E> min = min(node.right);
 
-            /*
-             * 接管被删除节点的引用
-             */
+            // 从原来的位置删除, 顶替当前节点, 接管当前节点的左引用
             min.right = removeMin(node.right);
             min.left = node.left;
 
@@ -381,16 +387,14 @@ public class BinarySearchTree<E extends Comparable<E>> {
                 if (current.left != null) {
                     current = current.left;
                 } else {
-                    Node<E> newNode = new Node<>(e, null, null);
-                    current.left = newNode;
+                    current.left = new Node<>(e, null, null);
                     break;
                 }
             } else {
                 if (current.right != null) {
                     current = current.right;
                 } else {
-                    Node<E> newNode = new Node<>(e, null, null);
-                    current.right = newNode;
+                    current.right = new Node<>(e, null, null);
                     break;
                 }
             }
@@ -402,7 +406,6 @@ public class BinarySearchTree<E extends Comparable<E>> {
         while (!isEmpty()) {
             removeMax();
         }
-        removeRoot();
         length = 0;
     }
 
@@ -539,5 +542,19 @@ public class BinarySearchTree<E extends Comparable<E>> {
         }
         index = 0;
         return array;
+    }
+
+    public boolean isBTS() {
+        if (root == null) {
+            return true;
+        }
+
+        E[] array = inOrder();
+        for (int i = 0; i < array.length - 1; i++) {
+            if (array[i].compareTo(array[i + 1]) > 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }

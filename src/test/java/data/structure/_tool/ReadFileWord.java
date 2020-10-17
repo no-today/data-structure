@@ -17,17 +17,19 @@ public class ReadFileWord {
     /**
      * 读取信息到容器
      *
-     * @param resource
      * @param consumer
+     * @param resources
      * @throws Exception
      */
-    public static void read(String resource, Consumer<String> consumer) throws Exception {
-        File file = new File(ReadFileWord.class.getClassLoader().getResource("").getPath(), resource);
-        BufferedReader reader = new BufferedReader(new FileReader(file));
+    public static void read(Consumer<String> consumer, String... resources) throws Exception {
+        for (String resource : resources) {
+            File file = new File(ReadFileWord.class.getClassLoader().getResource("").getPath(), resource);
+            BufferedReader reader = new BufferedReader(new FileReader(file));
 
-        String line;
-        while ((line = reader.readLine()) != null) {
-            consumer.accept(line);
+            String line;
+            while ((line = reader.readLine()) != null) {
+                consumer.accept(line);
+            }
         }
     }
 }
