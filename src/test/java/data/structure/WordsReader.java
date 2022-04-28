@@ -1,8 +1,7 @@
-package data.structure._tool;
+package data.structure;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.util.function.Consumer;
 
 /**
@@ -12,7 +11,7 @@ import java.util.function.Consumer;
  * @date 2018/10/1
  * @time 0:45
  */
-public class ReadFileWord {
+public class WordsReader {
 
     /**
      * 读取信息到容器
@@ -23,8 +22,8 @@ public class ReadFileWord {
      */
     public static void read(Consumer<String> consumer, String... resources) throws Exception {
         for (String resource : resources) {
-            File file = new File(ReadFileWord.class.getClassLoader().getResource("").getPath(), resource);
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            File file = new File(WordsReader.class.getClassLoader().getResource("").getPath(), resource);
+            BufferedReader reader = new BufferedReader(new java.io.FileReader(file));
 
             String line;
             while ((line = reader.readLine()) != null) {

@@ -48,4 +48,9 @@ public class ArrayStack<E> implements Stack<E> {
     public void clear() {
         arrayList.clear();
     }
+
+    @Override
+    public String toString() {
+        return arrayList.toString();
+    }
 }

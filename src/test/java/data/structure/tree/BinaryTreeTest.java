@@ -1,6 +1,6 @@
 package data.structure.tree;
 
-import data.structure._tool.ReadFileWord;
+import data.structure.WordsReader;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
@@ -23,7 +23,7 @@ public class BinaryTreeTest {
         tree = new BinarySearchTree<>();
         words = new ArrayList<>();
 
-        ReadFileWord.read(line -> {
+        WordsReader.read(line -> {
             for (String word : line.split(" ")) {
                 tree.add(word);
                 words.add(word);

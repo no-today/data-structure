@@ -4,23 +4,21 @@ package data.structure.list;
 import data.structure.List;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ListTest {
 
     @Test
-    public void array() {
-        test(new LinkedList<>());
+    public void linked() {
+        basicProcess(new LinkedList<>());
     }
 
     @Test
-    public void linked() {
-        test(new ArrayList<>(3));
+    public void array() {
+        basicProcess(new ArrayList<>(3));
     }
 
-    public void test(List<String> list) {
+    public void basicProcess(List<String> list) {
         assertEquals(0, list.size());
         assertTrue(list.isEmpty());
 
