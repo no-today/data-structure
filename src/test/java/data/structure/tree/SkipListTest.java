@@ -1,6 +1,7 @@
-package data.structure.skiplist;
+package data.structure.tree;
 
 import data.structure.WordsReader;
+import data.structure.skiplist.SkipList;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
@@ -18,7 +19,7 @@ import java.util.UUID;
  * @date 2022/05/01 23:08
  */
 @State(value = Scope.Benchmark)
-public class SkipListBenchmarkTest {
+public class SkipListTest {
 
 
     SkipList skipList;

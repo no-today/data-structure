@@ -8,7 +8,7 @@
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Throughput, ops/time
-# Benchmark: data.structure.skiplist.SkipListBenchmarkTest.add
+# Benchmark: data.structure.tree.SkipListTest.add
 
 # Run progress: 0.00% complete, ETA 00:05:00
 # Fork: 1 of 1
@@ -24,7 +24,7 @@ Iteration   4: 159093.389 ops/s
 Iteration   5: 226559.776 ops/s
 
 
-Result "data.structure.skiplist.SkipListBenchmarkTest.add":
+Result "data.structure.tree.SkipListTest.add":
   209963.115 ±(99.9%) 117628.906 ops/s [Average]
   (min, avg, max) = (159093.389, 209963.115, 232205.065), stdev = 30547.853
   CI (99.9%): [92334.209, 327592.021] (assumes normal distribution)
@@ -40,7 +40,7 @@ Result "data.structure.skiplist.SkipListBenchmarkTest.add":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Throughput, ops/time
-# Benchmark: data.structure.skiplist.SkipListBenchmarkTest.remove
+# Benchmark: data.structure.tree.SkipListTest.remove
 
 # Run progress: 33.33% complete, ETA 00:03:25
 # Fork: 1 of 1
@@ -56,7 +56,7 @@ Iteration   4: 2773348.563 ops/s
 Iteration   5: 2635693.238 ops/s
 
 
-Result "data.structure.skiplist.SkipListBenchmarkTest.remove":
+Result "data.structure.tree.SkipListTest.remove":
   2832250.790 ±(99.9%) 662461.210 ops/s [Average]
   (min, avg, max) = (2635693.238, 2832250.790, 3093832.430), stdev = 172039.072
   CI (99.9%): [2169789.580, 3494712.000] (assumes normal distribution)
@@ -72,7 +72,7 @@ Result "data.structure.skiplist.SkipListBenchmarkTest.remove":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Throughput, ops/time
-# Benchmark: data.structure.skiplist.SkipListBenchmarkTest.search
+# Benchmark: data.structure.tree.SkipListTest.search
 
 # Run progress: 66.67% complete, ETA 00:01:41
 # Fork: 1 of 1
@@ -88,7 +88,7 @@ Iteration   4: 2972720.309 ops/s
 Iteration   5: 3180415.174 ops/s
 
 
-Result "data.structure.skiplist.SkipListBenchmarkTest.search":
+Result "data.structure.tree.SkipListTest.search":
   2898133.836 ±(99.9%) 698757.617 ops/s [Average]
   (min, avg, max) = (2731817.669, 2898133.836, 3180415.174), stdev = 181465.134
   CI (99.9%): [2199376.220, 3596891.453] (assumes normal distribution)
@@ -103,6 +103,6 @@ the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from th
 Do not assume the numbers tell you what you want them to tell.
 
 Benchmark                      Mode  Cnt        Score        Error  Units
-SkipListBenchmarkTest.add     thrpt    5   209963.115 ± 117628.906  ops/s
-SkipListBenchmarkTest.remove  thrpt    5  2832250.790 ± 662461.210  ops/s
-SkipListBenchmarkTest.search  thrpt    5  2898133.836 ± 698757.617  ops/s
+SkipListTest.add              thrpt    5   209963.115 ± 117628.906  ops/s
+SkipListTest.remove           thrpt    5  2832250.790 ± 662461.210  ops/s
+SkipListTest.search           thrpt    5  2898133.836 ± 698757.617  ops/s

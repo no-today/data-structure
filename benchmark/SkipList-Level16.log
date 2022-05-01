@@ -8,7 +8,7 @@
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Throughput, ops/time
-# Benchmark: data.structure.skiplist.SkipListBenchmarkTest.add
+# Benchmark: data.structure.tree.SkipListTest.add
 
 # Run progress: 0.00% complete, ETA 00:05:00
 # Fork: 1 of 1
@@ -24,7 +24,7 @@ Iteration   4: 122925.614 ops/s
 Iteration   5: 118530.273 ops/s
 
 
-Result "data.structure.skiplist.SkipListBenchmarkTest.add":
+Result "data.structure.tree.SkipListTest.add":
   132641.268 ±(99.9%) 45306.463 ops/s [Average]
   (min, avg, max) = (118530.273, 132641.268, 145795.856), stdev = 11765.945
   CI (99.9%): [87334.805, 177947.731] (assumes normal distribution)
@@ -40,7 +40,7 @@ Result "data.structure.skiplist.SkipListBenchmarkTest.add":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Throughput, ops/time
-# Benchmark: data.structure.skiplist.SkipListBenchmarkTest.remove
+# Benchmark: data.structure.tree.SkipListTest.remove
 
 # Run progress: 33.33% complete, ETA 00:03:22
 # Fork: 1 of 1
@@ -56,7 +56,7 @@ Iteration   4: 3230182.825 ops/s
 Iteration   5: 3133003.799 ops/s
 
 
-Result "data.structure.skiplist.SkipListBenchmarkTest.remove":
+Result "data.structure.tree.SkipListTest.remove":
   3226524.201 ±(99.9%) 584666.116 ops/s [Average]
   (min, avg, max) = (3026416.237, 3226524.201, 3397707.636), stdev = 151835.934
   CI (99.9%): [2641858.084, 3811190.317] (assumes normal distribution)
@@ -72,7 +72,7 @@ Result "data.structure.skiplist.SkipListBenchmarkTest.remove":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Throughput, ops/time
-# Benchmark: data.structure.skiplist.SkipListBenchmarkTest.search
+# Benchmark: data.structure.tree.SkipListTest.search
 
 # Run progress: 66.67% complete, ETA 00:01:41
 # Fork: 1 of 1
@@ -88,7 +88,7 @@ Iteration   4: 2763114.213 ops/s
 Iteration   5: 2586583.101 ops/s
 
 
-Result "data.structure.skiplist.SkipListBenchmarkTest.search":
+Result "data.structure.tree.SkipListTest.search":
   2688827.447 ±(99.9%) 356644.557 ops/s [Average]
   (min, avg, max) = (2586583.101, 2688827.447, 2804896.960), stdev = 92619.459
   CI (99.9%): [2332182.890, 3045472.004] (assumes normal distribution)
