@@ -1,0 +1,108 @@
+# JMH version: 1.34
+# VM version: JDK 11.0.11, OpenJDK 64-Bit Server VM, 11.0.11+9
+# VM invoker: /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home/bin/java
+# VM options: -javaagent:/Users/notoday/Library/Application Support/JetBrains/Toolbox/apps/IDEA-U/ch-0/221.5080.210/IntelliJ IDEA.app/Contents/lib/idea_rt.jar=62401:/Users/notoday/Library/Application Support/JetBrains/Toolbox/apps/IDEA-U/ch-0/221.5080.210/IntelliJ IDEA.app/Contents/bin -Dfile.encoding=UTF-8
+# Blackhole mode: full + dont-inline hint (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 10 s each
+# Measurement: 5 iterations, 10 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: data.structure.skiplist.SkipListBenchmarkTest.add
+
+# Run progress: 0.00% complete, ETA 00:05:00
+# Fork: 1 of 1
+# Warmup Iteration   1: 419829.235 ops/s
+# Warmup Iteration   2: 319066.110 ops/s
+# Warmup Iteration   3: 284651.610 ops/s
+# Warmup Iteration   4: 248535.531 ops/s
+# Warmup Iteration   5: 257999.226 ops/s
+Iteration   1: 228275.603 ops/s
+Iteration   2: 232205.065 ops/s
+Iteration   3: 203681.744 ops/s
+Iteration   4: 159093.389 ops/s
+Iteration   5: 226559.776 ops/s
+
+
+Result "data.structure.skiplist.SkipListBenchmarkTest.add":
+  209963.115 ±(99.9%) 117628.906 ops/s [Average]
+  (min, avg, max) = (159093.389, 209963.115, 232205.065), stdev = 30547.853
+  CI (99.9%): [92334.209, 327592.021] (assumes normal distribution)
+
+
+# JMH version: 1.34
+# VM version: JDK 11.0.11, OpenJDK 64-Bit Server VM, 11.0.11+9
+# VM invoker: /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home/bin/java
+# VM options: -javaagent:/Users/notoday/Library/Application Support/JetBrains/Toolbox/apps/IDEA-U/ch-0/221.5080.210/IntelliJ IDEA.app/Contents/lib/idea_rt.jar=62401:/Users/notoday/Library/Application Support/JetBrains/Toolbox/apps/IDEA-U/ch-0/221.5080.210/IntelliJ IDEA.app/Contents/bin -Dfile.encoding=UTF-8
+# Blackhole mode: full + dont-inline hint (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 10 s each
+# Measurement: 5 iterations, 10 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: data.structure.skiplist.SkipListBenchmarkTest.remove
+
+# Run progress: 33.33% complete, ETA 00:03:25
+# Fork: 1 of 1
+# Warmup Iteration   1: 2998199.449 ops/s
+# Warmup Iteration   2: 3062632.010 ops/s
+# Warmup Iteration   3: 3048694.320 ops/s
+# Warmup Iteration   4: 2992492.675 ops/s
+# Warmup Iteration   5: 2910836.862 ops/s
+Iteration   1: 2766573.034 ops/s
+Iteration   2: 3093832.430 ops/s
+Iteration   3: 2891806.683 ops/s
+Iteration   4: 2773348.563 ops/s
+Iteration   5: 2635693.238 ops/s
+
+
+Result "data.structure.skiplist.SkipListBenchmarkTest.remove":
+  2832250.790 ±(99.9%) 662461.210 ops/s [Average]
+  (min, avg, max) = (2635693.238, 2832250.790, 3093832.430), stdev = 172039.072
+  CI (99.9%): [2169789.580, 3494712.000] (assumes normal distribution)
+
+
+# JMH version: 1.34
+# VM version: JDK 11.0.11, OpenJDK 64-Bit Server VM, 11.0.11+9
+# VM invoker: /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home/bin/java
+# VM options: -javaagent:/Users/notoday/Library/Application Support/JetBrains/Toolbox/apps/IDEA-U/ch-0/221.5080.210/IntelliJ IDEA.app/Contents/lib/idea_rt.jar=62401:/Users/notoday/Library/Application Support/JetBrains/Toolbox/apps/IDEA-U/ch-0/221.5080.210/IntelliJ IDEA.app/Contents/bin -Dfile.encoding=UTF-8
+# Blackhole mode: full + dont-inline hint (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 10 s each
+# Measurement: 5 iterations, 10 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: data.structure.skiplist.SkipListBenchmarkTest.search
+
+# Run progress: 66.67% complete, ETA 00:01:41
+# Fork: 1 of 1
+# Warmup Iteration   1: 2965573.476 ops/s
+# Warmup Iteration   2: 3159542.579 ops/s
+# Warmup Iteration   3: 3017639.688 ops/s
+# Warmup Iteration   4: 2820787.769 ops/s
+# Warmup Iteration   5: 2811404.917 ops/s
+Iteration   1: 2731817.669 ops/s
+Iteration   2: 2820975.019 ops/s
+Iteration   3: 2784741.009 ops/s
+Iteration   4: 2972720.309 ops/s
+Iteration   5: 3180415.174 ops/s
+
+
+Result "data.structure.skiplist.SkipListBenchmarkTest.search":
+  2898133.836 ±(99.9%) 698757.617 ops/s [Average]
+  (min, avg, max) = (2731817.669, 2898133.836, 3180415.174), stdev = 181465.134
+  CI (99.9%): [2199376.220, 3596891.453] (assumes normal distribution)
+
+
+# Run complete. Total time: 00:05:04
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+Benchmark                      Mode  Cnt        Score        Error  Units
+SkipListBenchmarkTest.add     thrpt    5   209963.115 ± 117628.906  ops/s
+SkipListBenchmarkTest.remove  thrpt    5  2832250.790 ± 662461.210  ops/s
+SkipListBenchmarkTest.search  thrpt    5  2898133.836 ± 698757.617  ops/s
