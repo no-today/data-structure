@@ -1,4 +1,4 @@
-package data.structure.skiplist;
+package data.structure.list;
 
 /**
  * 排序的链表

@@ -1,5 +1,6 @@
-package data.structure.skiplist;
+package data.structure.list;
 
+import data.structure.list.SortedList;
 import org.junit.jupiter.api.Test;
 
 /**
