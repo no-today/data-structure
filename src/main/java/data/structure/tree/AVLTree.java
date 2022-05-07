@@ -21,6 +21,10 @@ public class AVLTree<E extends Comparable<E>> {
 
     private int length;
 
+    public int height() {
+        return height(root);
+    }
+
     private int height(Node<E> node) {
         return node == null ? 0 : node.height;
     }

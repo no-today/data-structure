@@ -1,4 +1,4 @@
-package data.structure.tree;
+package data.structure.tree.benchmark;
 
 import data.structure.WordsReader;
 import data.structure.skiplist.SkipList;
@@ -19,7 +19,7 @@ import java.util.UUID;
  * @date 2022/05/01 23:08
  */
 @State(value = Scope.Benchmark)
-public class SkipListTest {
+public class SkipListBenchmarkTest {
 
 
     SkipList skipList;

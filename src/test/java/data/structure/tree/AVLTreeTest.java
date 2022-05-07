@@ -1,65 +1,30 @@
 package data.structure.tree;
 
-import data.structure.WordsReader;
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.options.Options;
-import org.openjdk.jmh.runner.options.OptionsBuilder;
+import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.UUID;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@State(value = Scope.Benchmark)
-public class AVLTreeTest {
+/**
+ * @author no-today
+ * @date 2022/05/07 14:23
+ */
+class AVLTreeTest {
 
-    AVLTree<String> tree;
-    ArrayList<String> words;
-    Random rand = new Random();
+    @Test
+    void basic() {
+        int count = 1000000;
 
-    @Setup
-    public void init() throws Exception {
-        tree = new AVLTree<>();
-        words = new ArrayList<>();
+        AVLTree<Integer> tree = new AVLTree<>();
+        for (int i = 0; i < count; i++) {
+            int element = (int) (Math.random() * 10000000);
+            tree.add(element);                      // O(logn)
+            assertTrue(tree.contains(element));     // O(logn)
+        }
 
-        WordsReader.read(line -> {
-            for (String word : line.split(" ")) {
-                tree.add(word);
-                words.add(word);
-            }
-        }, "a-tale-of-two-cities.txt", "pride-and-prejudice.txt", "world.txt");
-    }
+        assertTrue(tree.isBalanced());          // O(n)
+        assertTrue(tree.isBTS());               // O(2n)
 
-    @Benchmark
-    public void add() {
-        tree.add(UUID.randomUUID().toString());
-    }
-
-    @Benchmark
-    public void search() {
-        tree.contains(words.get(0));
-        tree.contains(words.get(words.size() / 2));
-        tree.contains(words.get(words.size() - 1));
-    }
-
-    @Benchmark
-    public void remove() {
-        tree.remove(words.get(1));
-        tree.remove(words.get(words.size() / 2 + 1));
-        tree.remove(words.get(words.size() - 2));
-    }
-
-    public static void main(String[] args) throws Exception {
-        String simpleName = AVLTreeTest.class.getSimpleName();
-        Options options = new OptionsBuilder()
-                .include(simpleName)
-                .output(simpleName + ".log")
-                .forks(1)
-                .build();
-
-        new Runner(options).run();
+        // 最多搜索 H 次即可找到元素
+        System.out.println("height: " + tree.height());
     }
 }
