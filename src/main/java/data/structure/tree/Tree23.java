@@ -1,5 +1,7 @@
 package data.structure.tree;
 
+import data.structure.Tree;
+
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -13,19 +15,119 @@ import java.util.function.BiConsumer;
  * @author no-today
  * @date 2022/05/03 13:46
  */
-public class Tree23<E extends Comparable<E>> {
+public class Tree23<E extends Comparable<E>> implements Tree<E> {
 
     private Node23<E> root;
 
     private int length;
 
+    private int height;
+
+    private static class Node23<E extends Comparable<E>> {
+
+        private E leftElement, rightElement;
+
+        private Node23<E> left, mid, right;
+
+        /**
+         * 删除元素需要父节点介入
+         */
+        private Node23<E> parent;
+
+        public Node23(E leftElement) {
+            this.leftElement = leftElement;
+        }
+
+        /**
+         * 只有未满时才能调用
+         * <p>
+         * 简单的维护大小
+         */
+        public void add(E element) {
+            if (isFull()) throw new IllegalStateException("Node already full, can not add");
+
+            if (leftElement.compareTo(element) > 0) {
+                rightElement = leftElement;
+                leftElement = element;
+            } else {
+                rightElement = element;
+            }
+        }
+
+        /**
+         * 只有满时才能调用
+         */
+        public void del(E element) {
+            if (!isFull()) throw new IllegalStateException("Node not full, can not del");
+
+            if (leftElement.compareTo(element) == 0) {
+                leftElement = rightElement;
+            }
+            rightElement = null;
+        }
+
+        public E min() {
+            return leftElement;
+        }
+
+        public E max() {
+            return isFull() ? rightElement : leftElement;
+        }
+
+        public boolean isFull() {
+            return rightElement != null;
+        }
+
+        /**
+         * 检查是否是叶子节点
+         */
+        public boolean isLeaf() {
+            return left == null;
+        }
+
+        public boolean isRoot() {
+            return parent == null;
+        }
+
+        public boolean isBalanced() {
+            if (left == null && mid == null && right == null) return true;
+            return left != null && right != null;
+        }
+
+        /**
+         * 检查当前节点子节点的父链接是否正常
+         * 分裂、合并只后可能会出现当前节点孩子的父节点不是当前节点
+         */
+        public boolean isValidParentLink() {
+            if (left != null && left.parent != this) return false;
+            if (right != null && right.parent != this) return false;
+            if (mid != null && mid.parent != this) return false;
+            return true;
+        }
+
+        /**
+         * 分裂 和 合并都会使原有的父子节点关系失效
+         * 需要对有改动的节点进行重新连接父子关系
+         */
+        public void relinkChildParent() {
+            if (left != null) left.parent = this;
+            if (right != null) right.parent = this;
+            if (mid != null) mid.parent = this;
+        }
+    }
+
+    @Override
     public void add(E element) {
         if (root == null) {
             root = new Node23<>(element);
+            height++;
         } else {
             // 如果返回不为空, 说明根节点进行了分裂, 把返回的中位数作为新的根节点
             Node23<E> middle = add(this.root, element);
-            if (middle != null) root = middle;
+            if (middle != null) {
+                root = middle;
+                height++;
+            }
         }
 
         length++;
@@ -266,11 +368,7 @@ public class Tree23<E extends Comparable<E>> {
     }
 
     private void resetChildParent(Node23... nodes) {
-        for (Node23 node : nodes) {
-            if (node.left != null) node.left.parent = node;
-            if (node.right != null) node.right.parent = node;
-            if (node.mid != null) node.mid.parent = node;
-        }
+        for (Node23 node : nodes) node.relinkChildParent();
     }
 
     /**
@@ -278,6 +376,7 @@ public class Tree23<E extends Comparable<E>> {
      *
      * @param element target
      */
+    @Override
     public boolean contains(E element) {
         if (element == null) {
             throw new NullPointerException("find target is can not null");
@@ -345,72 +444,36 @@ public class Tree23<E extends Comparable<E>> {
         // 3节点直接删
         if (deleteNode.isFull()) {
             deleteNode.del(element);
+            length--;
             return true;
         }
 
-        return false;
-    }
-
-    /**
-     * 检查节点是平衡的
-     * <p>
-     * 左右节点高度一致
-     * <p>
-     * 中间节点有点特殊
-     * - 为空时不参与运算
-     * - 不为空则递归以下中间节点的左右高度, 再+1(自己这层)
-     */
-    public boolean isBalance() {
-        int lrHeight = balanceHeight(root);
-        int midHeight = balanceHeight(root.mid);
-        if (midHeight > 0) {
-            midHeight++; // 算上 root.mid 这层高
-        }
-
-        // 左右高度不一致, 不平衡
-        if (lrHeight == -1) {
-            return false;
-        }
-
-        // 中间节点为空, 不参与运算
-        if (midHeight == 0) {
+        // 根节点为2节点
+        if (deleteNode.isRoot()) {
+            root = null;
+            length--;
             return true;
-        } else {
-            return lrHeight == midHeight;
-        }
-    }
-
-    /**
-     * 返回平衡高度(左右节点一致的高度)
-     */
-    public int balanceHeight() {
-        return balanceHeight(root);
-    }
-
-    /**
-     * 返回左右节点一致的高度
-     * <p>
-     * 如果不一致, 返回 -1
-     */
-    private int balanceHeight(Node23<E> node) {
-        if (node == null) return 0;
-
-        int leftHeight = 0;
-        int rightHeight = 0;
-
-        Node23<E> cur = node;
-        while (cur.left != null) {
-            cur = cur.left;
-            leftHeight++;
         }
 
-        cur = node;
-        while (cur.right != null) {
-            cur = cur.right;
-            rightHeight++;
+        /*
+         * 父2, 兄3
+         *
+         *       4(parent)                      4
+         *     /   \               ---->      /   \
+         *    /     \                        /     \
+         *   2(del) 6,8(brother)            3       5
+         *  / \    / | \                   / \     / \
+         * 1   3  5  7  9,10              dl dr
+         *
+         * 删除节点的值 = 父亲节点的值
+         * 父亲节点的值 = 兄弟节点的小值
+         */
+        Node23<E> parent = deleteNode.parent;
+        if (!parent.isFull() && parent.right.isFull()) {
+            deleteNode.del(parent.leftElement);
         }
 
-        return leftHeight == rightHeight ? leftHeight : -1;
+        return true;
     }
 
     public E[] toArray(E[] array) {
@@ -425,8 +488,16 @@ public class Tree23<E extends Comparable<E>> {
         return array;
     }
 
-    public int length() {
+    public int size() {
         return length;
+    }
+
+    public boolean isEmpty() {
+        return length == 0;
+    }
+
+    public int height() {
+        return height;
     }
 
     @Override
@@ -435,45 +506,11 @@ public class Tree23<E extends Comparable<E>> {
     }
 
     /**
-     * 校验是否是正确的父节点引用
+     * 前序遍历(升序)
+     *
+     * @param cur      当前节点
+     * @param consumer 通常只需要关注值即可, 某些需要 TDD 的地方需要用节点做验证
      */
-    public boolean correctParent() {
-        AtomicInteger counter = new AtomicInteger(2);
-        try {
-            foreach(root, (node, element) -> {
-                if (node.isLeaf()) {
-                    return;
-                }
-
-                if (node.parent == null) {
-                    int i = counter.decrementAndGet();
-                    if (node.isFull()) {
-                        if (i < 0) {
-                            throw new RuntimeException("node parent is null");
-                        }
-                    } else if (i < 1) {
-                        throw new RuntimeException("node parent is null");
-                    }
-                }
-
-                if (node.left != null && node.left.parent != node) {
-                    throw new RuntimeException("left node parent error");
-                }
-                if (node.mid != null && node.mid.parent != node) {
-                    throw new RuntimeException("middle node parent error");
-                }
-                if (node.right != null && node.right.parent != node) {
-                    throw new RuntimeException("right node parent error");
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        return true;
-    }
-
     private void foreach(Node23<E> cur, BiConsumer<Node23<E>, E> consumer) {
         if (cur == null) {
             return;
@@ -487,67 +524,55 @@ public class Tree23<E extends Comparable<E>> {
     }
 
     /**
+     * 检查节点是平衡的(左右节点高度一致)
+     * <p>
+     * 中间节点有点特殊
+     * - 为空时不参与运算
+     * - 不为空则递归以下中间节点的左右高度, 再+1(自己这层)
+     */
+    public boolean isBalanced() {
+        return isBalanced(root);
+    }
+
+    private boolean isBalanced(Node23<E> node) {
+        if (node == null) return true;
+
+        if (!node.isBalanced()) {
+            return false;
+        }
+
+        return isBalanced(node.left) && isBalanced(node.mid) && isBalanced(node.right);
+    }
+
+    /**
+     * 校验是否是正确的父节点引用
+     */
+    public boolean isValidParentLink() {
+        // 根节点为 2节点, 那么最多出现 1次, 3节点最多出现 2次
+        AtomicInteger rootNodeCount = new AtomicInteger();
+        try {
+            foreach(root, (node, element) -> {
+                // 叶子节点没有子节点, 不需要验证
+                if (node.isLeaf()) return;
+                if (node.isRoot()) {
+                    rootNodeCount.incrementAndGet();
+                    if (!node.isFull() && rootNodeCount.get() > 1) throw new RuntimeException("Parent is null");
+                    if (node.isFull() && rootNodeCount.get() > 2) throw new RuntimeException("Parent is null");
+                }
+                if (!node.isValidParentLink()) throw new RuntimeException("Parent is null");
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * 从哪个方向合并到当前节点的
      */
     private enum Next {
         LEFT, MID, RIGHT
-    }
-
-    private static class Node23<E extends Comparable<E>> {
-
-        private E leftElement, rightElement;
-
-        private Node23<E> left, mid, right;
-
-        /**
-         * 删除元素需要父节点介入
-         */
-        private Node23<E> parent;
-
-        public Node23(E leftElement) {
-            this.leftElement = leftElement;
-        }
-
-        /**
-         * 简单的维护大小
-         */
-        public void add(E element) {
-            if (leftElement.compareTo(element) > 0) {
-                rightElement = leftElement;
-                leftElement = element;
-            } else {
-                rightElement = element;
-            }
-        }
-
-        public void del(E element) {
-            if (leftElement.compareTo(element) == 0) {
-                leftElement = rightElement;
-            }
-            rightElement = null;
-        }
-
-        public E min() {
-            return leftElement;
-        }
-
-        public E max() {
-            return isFull() ? rightElement : leftElement;
-        }
-
-        public boolean isFull() {
-            return rightElement != null;
-        }
-
-        /**
-         * 检查是否是叶子节点
-         */
-        public boolean isLeaf() {
-            return left == null;
-        }
-
-        public boolean isRoot() {
-            return parent == null;
-        }
     }
 }

@@ -2,8 +2,12 @@ package data.structure.tree;
 
 import data.structure.Queue;
 import data.structure.Stack;
+import data.structure.Tree;
 import data.structure.queue.LinkedQueue;
 import data.structure.stack.ArrayStack;
+
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 二叉树
@@ -19,16 +23,11 @@ import data.structure.stack.ArrayStack;
  * @date 2018/9/27
  * @time 13:36
  */
-public class BinarySearchTree<E extends Comparable<E>> {
+public class BinarySearchTree<E extends Comparable<E>> implements Tree<E> {
 
     private Node<E> root;
 
     private int length;
-
-    /**
-     * 遍历转化成 Array 时使用
-     */
-    private int index;
 
     public boolean isEmpty() {
         return length == 0;
@@ -41,6 +40,7 @@ public class BinarySearchTree<E extends Comparable<E>> {
     /**
      * 添加元素
      */
+    @Override
     public void add(E e) {
         root = add(root, e);
     }
@@ -72,6 +72,7 @@ public class BinarySearchTree<E extends Comparable<E>> {
     /**
      * 元素是否存在
      */
+    @Override
     public boolean contains(E e) {
         return contains(root, e);
     }
@@ -109,19 +110,18 @@ public class BinarySearchTree<E extends Comparable<E>> {
         }
 
         E[] array = (E[]) new Comparable[length];
-        preOrder(root, array);
-        index = 0;
+        preOrder(root, array, new AtomicInteger());
         return array;
     }
 
-    private void preOrder(Node<E> node, E[] array) {
+    private void preOrder(Node<E> node, E[] array, AtomicInteger index) {
         if (node == null) {
             return;
         }
 
-        array[index++] = node.e;
-        preOrder(node.left, array);
-        preOrder(node.right, array);
+        array[index.getAndIncrement()] = node.e;
+        preOrder(node.left, array, index);
+        preOrder(node.right, array, index);
     }
 
     /**
@@ -133,19 +133,18 @@ public class BinarySearchTree<E extends Comparable<E>> {
         }
 
         E[] array = (E[]) new Comparable[length];
-        inOrder(root, array);
-        index = 0;
+        inOrder(root, array, new AtomicInteger());
         return array;
     }
 
-    private void inOrder(Node<E> node, E[] array) {
+    private void inOrder(Node<E> node, E[] array, AtomicInteger index) {
         if (node == null) {
             return;
         }
 
-        inOrder(node.left, array);
-        array[index++] = node.e;
-        inOrder(node.right, array);
+        inOrder(node.left, array, index);
+        array[index.getAndIncrement()] = node.e;
+        inOrder(node.right, array, index);
     }
 
     /**
@@ -157,19 +156,18 @@ public class BinarySearchTree<E extends Comparable<E>> {
         }
 
         E[] array = (E[]) new Comparable[length];
-        postOrder(root, array);
-        index = 0;
+        postOrder(root, array, new AtomicInteger());
         return array;
     }
 
-    private void postOrder(Node<E> node, E[] array) {
+    private void postOrder(Node<E> node, E[] array, AtomicInteger index) {
         if (node == null) {
             return;
         }
 
-        postOrder(node.left, array);
-        postOrder(node.right, array);
-        array[index++] = node.e;
+        postOrder(node.left, array, index);
+        postOrder(node.right, array, index);
+        array[index.getAndIncrement()] = node.e;
     }
 
     /**
@@ -185,9 +183,10 @@ public class BinarySearchTree<E extends Comparable<E>> {
         Queue<Node<E>> queue = new LinkedQueue<>();
         queue.enqueue(root);
 
+        AtomicInteger index = new AtomicInteger();
         while (!queue.isEmpty()) {
             Node<E> node = queue.dequeue();
-            array[index++] = node.e;
+            array[index.getAndIncrement()] = node.e;
             if (node.left != null) {
                 queue.enqueue(node.left);
             }
@@ -196,7 +195,6 @@ public class BinarySearchTree<E extends Comparable<E>> {
             }
         }
 
-        index = 0;
         return array;
     }
 
@@ -301,8 +299,8 @@ public class BinarySearchTree<E extends Comparable<E>> {
     /**
      * 删除指定节点
      */
-    public boolean remove(E e) {
-        return (root = remove(root, e)) != null;
+    public void remove(E e) {
+        root = remove(root, e);
     }
 
     private Node<E> remove(Node<E> node, E e) {
@@ -446,9 +444,10 @@ public class BinarySearchTree<E extends Comparable<E>> {
         Stack<Node<E>> stack = new ArrayStack<>();
 
         Node<E> current = root;
+        AtomicInteger index = new AtomicInteger();
         while (current != null || !stack.isEmpty()) {
             if (current != null) {
-                array[index++] = current.e;
+                array[index.getAndIncrement()] = current.e;
                 stack.push(current);
                 current = current.left;
             } else {
@@ -456,7 +455,6 @@ public class BinarySearchTree<E extends Comparable<E>> {
                 current = node.right;
             }
         }
-        index = 0;
         return array;
     }
 
@@ -476,6 +474,7 @@ public class BinarySearchTree<E extends Comparable<E>> {
         /**
          * 未找到最左侧节点 or 栈不为空
          */
+        AtomicInteger index = new AtomicInteger();
         while (current != null || !stack.isEmpty()) {
             /**
              * 左侧有元素,一路压栈,直到找到最左侧节点
@@ -488,11 +487,10 @@ public class BinarySearchTree<E extends Comparable<E>> {
                  * 得到最左侧节点,最小值
                  */
                 Node<E> node = stack.pop();
-                array[index++] = node.e;
+                array[index.getAndIncrement()] = node.e;
                 current = node.right;
             }
         }
-        index = 0;
         return array;
     }
 
@@ -510,6 +508,7 @@ public class BinarySearchTree<E extends Comparable<E>> {
 
         Node<E> current = root;
         int flag = 1;
+        AtomicInteger index = new AtomicInteger();
         while (current != null || !nodeStack.isEmpty()) {
             /*
              * 左节点全部入栈,并记录入栈状态
@@ -525,7 +524,7 @@ public class BinarySearchTree<E extends Comparable<E>> {
              */
             while (!nodeStack.isEmpty() && flagStack.peek() == flag) {
                 flagStack.pop();
-                array[index++] = nodeStack.pop().e;
+                array[index.getAndIncrement()] = nodeStack.pop().e;
             }
 
             /*
@@ -540,7 +539,6 @@ public class BinarySearchTree<E extends Comparable<E>> {
                 current = current.right;
             }
         }
-        index = 0;
         return array;
     }
 
@@ -556,5 +554,10 @@ public class BinarySearchTree<E extends Comparable<E>> {
             }
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(inOrder());
     }
 }

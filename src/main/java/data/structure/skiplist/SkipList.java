@@ -11,7 +11,7 @@ import java.util.List;
  * @author no-today
  * @date 2022/04/30 14:25
  */
-public class SkipList {
+public class SkipList<E extends Comparable<E>> {
 
     private static final int DEFAULT_MAX_LEVEL = 16;
 
@@ -27,7 +27,7 @@ public class SkipList {
 
     private long length;
 
-    private SkipListNode root;
+    private final SkipListNode<E> root;
 
     public SkipList() {
         this(DEFAULT_MAX_LEVEL, DEFAULT_P_FACTOR);
@@ -38,7 +38,7 @@ public class SkipList {
         this.pFactor = Math.min(pFactor, DEFAULT_P_FACTOR); // 索引太多没意义
 
         this.currentLevel = 1;
-        this.root = new SkipListNode(0, maxLevel);
+        this.root = new SkipListNode<>(null, maxLevel);
     }
 
     /**
@@ -53,17 +53,17 @@ public class SkipList {
      * 当前节点的右节点比新增元素大, 说明应该在 当前节点 和 当前节点的右节点中间插入新节点.
      * while cur.next != null and new < cur.next: cur = cur.next
      */
-    public void add(double score) {
+    public void add(E element) {
         // 随机索引 N 层
         int level = randomIndexLevel();
         // refresh currentLevel
         currentLevel = Math.max(currentLevel, level);
 
         // 从上往下查找插入的位置
-        SkipListNode newNode = new SkipListNode(score, level);
-        SkipListNode cur = root;
+        SkipListNode<E> newNode = new SkipListNode<>(element, level);
+        SkipListNode<E> cur = root;
         for (int i = currentLevel - 1; i >= 0; i--) {
-            cur = findInsertPosition(cur, i, score);
+            cur = findInsertPosition(cur, i, element);
 
             // 从上往下找是为了搜索效率, 但并不是每一层都需要插入, 只需要添加到底部的 level 层
             if (i < level) {
@@ -78,12 +78,13 @@ public class SkipList {
         length++;
     }
 
-    public boolean exists(double score) {
-        SkipListNode cur = root;
+    public boolean contains(E element) {
+        SkipListNode<E> cur = root;
         for (int i = currentLevel - 1; i >= 0; i--) {
-            cur = findInsertPosition(cur, i, score);
+            cur = findInsertPosition(cur, i, element);
 
-            if (cur.next[0].score == score) {
+            // 如果找的目标比所有的的大, 那么 cur 已经是链表尾部了(指向空)
+            if (cur.next[i] != null && cur.next[i].element.compareTo(element) == 0) {
                 return true;
             }
 
@@ -94,18 +95,15 @@ public class SkipList {
 
     /**
      * 删除元素: 反添加操作
-     *
-     * @param score
-     * @return
      */
-    public boolean remove(double score) {
+    public boolean remove(E element) {
         boolean deleted = false;
-        SkipListNode cur = root;
+        SkipListNode<E> cur = root;
         for (int i = currentLevel - 1; i >= 0; i--) {
-            cur = findInsertPosition(cur, i, score);
+            cur = findInsertPosition(cur, i, element);
 
-            if (cur.next[i] != null && cur.next[i].score == score) {
-                SkipListNode removeNode = cur.next[i];
+            if (cur.next[i] != null && cur.next[i].element.compareTo(element) == 0) {
+                SkipListNode<E> removeNode = cur.next[i];
                 cur.next[i] = removeNode.next[i];
                 removeNode.next[i] = null;
 
@@ -131,18 +129,22 @@ public class SkipList {
      * @param limit 数量, -1 为不限制
      * @return 范围内的 n 个元素
      */
-    public List<Double> range(double start, double stop, int limit) {
-        if (stop == -1) stop = Double.MAX_VALUE;
+    public List<E> range(E start, E stop, int limit) {
         if (limit == -1) limit = Integer.MAX_VALUE;
 
-        List<Double> array = new ArrayList<>();
+        List<E> array = new ArrayList<>();
 
-        SkipListNode cur = root;
+        SkipListNode<E> cur = root;
         for (int i = currentLevel - 1; i >= 0; i--) {
             cur = findInsertPosition(cur, i, start);
 
+            // not found
+            if (cur.isRoot()) {
+                continue;
+            }
+
             // 找到首个比 start 大的节点
-            if (cur.score >= start) {
+            if (cur.element.compareTo(start) >= 0) {
                 break;
             }
         }
@@ -152,12 +154,12 @@ public class SkipList {
         int count = 0;
         while (cur != null && count < limit) {
             // 大于停止值, 不需要再继续收集了
-            if (cur.score > stop) {
+            if (stop != null && cur.element.compareTo(stop) > 0) {
                 break;
             }
 
-            if (cur.score >= start) {
-                array.add(cur.score);
+            if (cur.element.compareTo(start) >= 0) {
+                array.add(cur.element);
             }
 
             cur = cur.next[0];
@@ -167,7 +169,7 @@ public class SkipList {
         return array;
     }
 
-    public long length() {
+    public long size() {
         return length;
     }
 
@@ -176,12 +178,12 @@ public class SkipList {
         StringBuilder sb = new StringBuilder("[");
 
         // 直接遍历底层就行
-        SkipListNode cur = root.next[0];
+        SkipListNode<E> cur = root.next[0];
         while (cur != null) {
             if (cur.next[0] == null) {
-                sb.append(cur.score);
+                sb.append(cur.element);
             } else {
-                sb.append(cur.score).append(", ");
+                sb.append(cur.element).append(", ");
             }
 
             cur = cur.next[0];
@@ -195,14 +197,14 @@ public class SkipList {
      * <p>
      * 我的右节点比 目标元素 大, 说明 目标 应该位于 我 和 我的右节点 的 中间
      * <p>
-     * 返回的节点可能与 score 所处节点的值相同, 因为右节点必定是 大于的
+     * 返回的节点可能与 element 所处节点的值相同, 因为右节点必定是 大于的
      */
-    private SkipListNode findInsertPosition(SkipListNode node, int level, double score) {
+    private SkipListNode<E> findInsertPosition(SkipListNode<E> node, int level, E element) {
         // TODO 如需降序: 右节点小于等于 目标 时中断
 
         // 没有 next(右) 时停止
         // 右节点大于等于 目标 时中断, 返回当前节点
-        while (node.next[level] != null && node.next[level].score < score) {
+        while (node.next[level] != null && node.next[level].element.compareTo(element) < 0) {
             node = node.next[level];
         }
         return node;
@@ -219,12 +221,9 @@ public class SkipList {
         return level;
     }
 
-    private static class SkipListNode {
+    private static class SkipListNode<E> {
 
-        /**
-         * 权重
-         */
-        private double score;
+        private E element;
 
         /**
          * N 层都有不同的 next 节点
@@ -247,17 +246,21 @@ public class SkipList {
          * <p>
          * 这样关联起来之后, 任意节点都可以知道自己 N层 的 right、down 是哪个节点
          */
-        private SkipListNode[] next;
+        private SkipListNode<E>[] next;
 
-        public SkipListNode(double score, int level) {
-            this.score = score;
+        public SkipListNode(E element, int level) {
+            this.element = element;
             this.next = new SkipListNode[level];
+        }
+
+        public boolean isRoot() {
+            return element == null;
         }
 
         @Override
         public String toString() {
             final StringBuilder sb = new StringBuilder("{");
-            sb.append("score=").append(score);
+            sb.append("score=").append(element);
             sb.append(", levels=").append(next.length);
             sb.append('}');
             return sb.toString();

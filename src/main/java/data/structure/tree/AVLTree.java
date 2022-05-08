@@ -1,5 +1,8 @@
 package data.structure.tree;
 
+import data.structure.Tree;
+
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -15,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 对于任意一个节点，左子树和右子数的高度差不超过 1
  * <p>
  */
-public class AVLTree<E extends Comparable<E>> {
+public class AVLTree<E extends Comparable<E>> implements Tree<E> {
 
     private Node<E> root;
 
@@ -67,6 +70,7 @@ public class AVLTree<E extends Comparable<E>> {
         return length == 0;
     }
 
+    @Override
     public void add(E e) {
         root = add(root, e);
     }
@@ -208,7 +212,7 @@ public class AVLTree<E extends Comparable<E>> {
         if (isEmpty()) {
             return null;
         }
-        return max();
+        return max(root).e;
     }
 
     private Node<E> max(Node<E> node) {
@@ -253,7 +257,7 @@ public class AVLTree<E extends Comparable<E>> {
         return max;
     }
 
-    public Node<E> removeMax(Node<E> node) {
+    private Node<E> removeMax(Node<E> node) {
         if (node.right == null) {
             Node<E> left = node.left;
             node.left = null;
@@ -266,8 +270,8 @@ public class AVLTree<E extends Comparable<E>> {
         return balance(node);
     }
 
-    public boolean remove(E e) {
-        return remove(root, e) != null;
+    public void remove(E e) {
+        root = remove(root, e);
     }
 
     private Node<E> remove(Node<E> node, E e) {
@@ -281,7 +285,7 @@ public class AVLTree<E extends Comparable<E>> {
 
             retNode = node;
         } else if (e.compareTo(node.e) > 0) {
-            node.right = remove(node.left, e);
+            node.right = remove(node.right, e);
 
             retNode = node;
         } else {  // e.compareTo(node.e) == 0
@@ -377,6 +381,7 @@ public class AVLTree<E extends Comparable<E>> {
     /**
      * 元素是否存在
      */
+    @Override
     public boolean contains(E e) {
         return contains(root, e);
     }
@@ -403,5 +408,10 @@ public class AVLTree<E extends Comparable<E>> {
         }
 
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(inOrder());
     }
 }
