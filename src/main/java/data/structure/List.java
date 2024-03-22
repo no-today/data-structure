@@ -8,7 +8,7 @@ public interface List<E> {
 
     /**
      * Add
-     *
+     * <p>
      * :array:  O(1), when full O(N)
      * :linked: O(1)
      *
@@ -18,7 +18,7 @@ public interface List<E> {
 
     /**
      * Add in first
-     *
+     * <p>
      * :array:  O(n)
      * :linked: O(1)
      *
@@ -28,7 +28,7 @@ public interface List<E> {
 
     /**
      * Add in tail
-     *
+     * <p>
      * :array:  O(1), when full O(n)
      * :linked: O(1)
      *
@@ -38,7 +38,7 @@ public interface List<E> {
 
     /**
      * Remove by index
-     *
+     * <p>
      * :array:  O(n)
      * :linked: O(1)
      *
@@ -49,7 +49,7 @@ public interface List<E> {
 
     /**
      * Remove by element
-     *
+     * <p>
      * :array:  O(n)
      * :linked: 0(1)
      *
@@ -60,7 +60,7 @@ public interface List<E> {
 
     /**
      * Delete first
-     *
+     * <p>
      * :array:  O(n)
      * :linked: 0(1)
      *
@@ -70,7 +70,7 @@ public interface List<E> {
 
     /**
      * Delete tail
-     *
+     * <p>
      * :array:  O(1)
      * :linked: 0(1)
      *
@@ -80,7 +80,7 @@ public interface List<E> {
 
     /**
      * Update
-     *
+     * <p>
      * :array:  O(1)
      * :linked: 0(n)
      *
@@ -92,7 +92,7 @@ public interface List<E> {
 
     /**
      * Get by index
-     *
+     * <p>
      * :array:  O(1)
      * :linked: 0(n)
      *
@@ -103,7 +103,7 @@ public interface List<E> {
 
     /**
      * Element exists
-     *
+     * <p>
      * :array:  O(n)
      * :linked: 0(n)
      *
@@ -114,7 +114,7 @@ public interface List<E> {
 
     /**
      * Get the index of the element
-     *
+     * <p>
      * :array:  O(n)
      * :linked: 0(n)
      *
@@ -125,7 +125,7 @@ public interface List<E> {
 
     /**
      * Get the index of the element(Reverse order)
-     *
+     * <p>
      * :array:  O(n)
      * :linked: 0(n)
      *

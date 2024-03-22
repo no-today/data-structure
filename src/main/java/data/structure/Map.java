@@ -23,43 +23,43 @@ public interface Map<K, V> {
      */
     V remove(K key);
 
-	/**
-	 * Get by key
-	 *
-	 * @param key key
-	 * @return value
-	 */
-	V get(K key);
+    /**
+     * Get by key
+     *
+     * @param key key
+     * @return value
+     */
+    V get(K key);
 
-	/**
-	 * Existence key
-	 *
-	 * @param key key
-	 * @return exists
-	 */
-	boolean containsKey(K key);
+    /**
+     * Existence key
+     *
+     * @param key key
+     * @return exists
+     */
+    boolean containsKey(K key);
 
-	/**
-	 * Existence value
-	 *
-	 * @param value value
-	 * @return exists
-	 */
-	boolean containsValue(V value);
+    /**
+     * Existence value
+     *
+     * @param value value
+     * @return exists
+     */
+    boolean containsValue(V value);
 
-	/**
-	 * Get size
-	 *
-	 * @return size
-	 */
-	int size();
+    /**
+     * Get size
+     *
+     * @return size
+     */
+    int size();
 
-	/**
-	 * Is empty
-	 *
-	 * @return empty
-	 */
-	boolean isEmpty();
+    /**
+     * Is empty
+     *
+     * @return empty
+     */
+    boolean isEmpty();
 
     /**
      * Clear all element
@@ -71,7 +71,9 @@ public interface Map<K, V> {
      *
      * @return set
      */
-    Set<Map.Entry<K, V>> entrySet();
+    Set<Entry<K, V>> entrySet();
+
+    Set<K> entryKey();
 
     /**
      * Key-value pair
@@ -79,7 +81,7 @@ public interface Map<K, V> {
      * @param <K>
      * @param <V>
      */
-    interface Entry<K, V> extends Comparable<Entry<K, V>> {
+    interface Entry<K, V> {
         /**
          * Get key
          *

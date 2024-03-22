@@ -4,21 +4,21 @@ package data.structure;
  * @author no-today
  * @date 2018/9/29
  */
-public interface Set<element> {
+public interface Set<E> {
 
     /**
      * Add to
      *
      * @param element element
      */
-    void add(element element);
+    void add(E element);
 
     /**
      * Remove by element
      *
      * @param element element
      */
-    void remove(element element);
+    void remove(E element);
 
     /**
      * Check existence
@@ -26,7 +26,7 @@ public interface Set<element> {
      * @param element element
      * @return exists
      */
-    boolean contains(element element);
+    boolean contains(E element);
 
     /**
      * Get size

@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * @date 2018/10/1
  * @time 0:45
  */
-public class WordsReader {
+public class ArticleReader {
 
     /**
      * 读取信息到容器
@@ -22,7 +22,7 @@ public class WordsReader {
      */
     public static void read(Consumer<String> consumer, String... resources) throws Exception {
         for (String resource : resources) {
-            File file = new File(WordsReader.class.getClassLoader().getResource("").getPath(), resource);
+            File file = new File(ArticleReader.class.getClassLoader().getResource("").getPath(), resource);
             BufferedReader reader = new BufferedReader(new java.io.FileReader(file));
 
             String line;
