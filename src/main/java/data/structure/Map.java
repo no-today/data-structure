@@ -29,7 +29,9 @@ public interface Map<K, V> {
      * @param key key
      * @return value
      */
-    V get(K key);
+    V get(Object key);
+
+    V getOrDefault(Object key, V val);
 
     /**
      * Existence key
@@ -37,7 +39,7 @@ public interface Map<K, V> {
      * @param key key
      * @return exists
      */
-    boolean containsKey(K key);
+    boolean containsKey(Object key);
 
     /**
      * Existence value
@@ -45,7 +47,7 @@ public interface Map<K, V> {
      * @param value value
      * @return exists
      */
-    boolean containsValue(V value);
+    boolean containsValue(Object value);
 
     /**
      * Get size

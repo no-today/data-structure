@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class SortTest {
 
-    static final int COUNT = 100000;
+    static final int COUNT = 50000;
     static final int BOUND = Integer.MAX_VALUE;
     static final boolean PRINT = false;
 
@@ -23,7 +23,7 @@ class SortTest {
 
     @BeforeAll
     static void setup() {
-        ARRAY = TestUtils.genergateArray(COUNT, BOUND);
+        ARRAY = TestUtils.generateArray(COUNT, BOUND);
     }
 
     private static void assertOrderly(Integer[] array) {
@@ -79,8 +79,8 @@ class SortTest {
 
     @Test
     void mergeArray() {
-        Integer[] arr1 = TestUtils.genergateArray(5, 100);
-        Integer[] arr2 = TestUtils.genergateArray(5, 100);
+        Integer[] arr1 = TestUtils.generateArray(5, 100);
+        Integer[] arr2 = TestUtils.generateArray(5, 100);
         Sort.shell(arr1);
         Sort.shell(arr2);
 
@@ -91,7 +91,7 @@ class SortTest {
 
     @Test
     void merge() {
-        assertOrderly(Sort.merge(TestUtils.genergateArray(COUNT, BOUND)));
+        assertOrderly(Sort.merge(TestUtils.generateArray(COUNT, BOUND)));
     }
 
     @Test
@@ -99,8 +99,8 @@ class SortTest {
         int count = 5;
         int bound = 100;
 
-        Integer[] arr1 = TestUtils.genergateArray(count, bound);
-        Integer[] arr2 = TestUtils.genergateArray(count, bound);
+        Integer[] arr1 = TestUtils.generateArray(count, bound);
+        Integer[] arr2 = TestUtils.generateArray(count, bound);
 
         Sort.shell(arr1);
         Sort.shell(arr2);

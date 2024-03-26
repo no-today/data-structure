@@ -2,6 +2,8 @@ package data.structure.list;
 
 import data.structure.List;
 
+import java.util.Objects;
+
 /**
  * @author no-today
  * @date 2018/6/26
@@ -18,9 +20,6 @@ public class LinkedList<E> implements List<E> {
      */
     private Node<E> tail;
 
-    /**
-     * length
-     */
     private int length;
 
     /**
@@ -29,7 +28,7 @@ public class LinkedList<E> implements List<E> {
     private int index;
 
     @Override
-    public void add(E e) {
+    public boolean add(E e) {
         Node<E> lastTemp = tail;
 
         /*
@@ -49,6 +48,7 @@ public class LinkedList<E> implements List<E> {
             tail = newNode;
         }
         length++;
+        return true;
     }
 
     @Override
@@ -88,18 +88,17 @@ public class LinkedList<E> implements List<E> {
 
     @Override
     public boolean remove(E e) {
-        boolean flag = false;
         Node<E> firstTemp = head;
 
         while (firstTemp != null) {
-            if (firstTemp.element.equals(e)) {
+            if (Objects.equals(firstTemp.element, e)) {
                 remove(firstTemp);
-                flag = true;
+                return true;
             }
             firstTemp = firstTemp.next;
         }
 
-        return flag;
+        return false;
     }
 
     @Override
@@ -200,16 +199,13 @@ public class LinkedList<E> implements List<E> {
 
     /**
      * O(n)
-     *
-     * @param o
-     * @return
      */
     @Override
-    public boolean contains(E o) {
+    public boolean contains(Object e) {
         Node<E> firstTemp = head;
 
         while (firstTemp != null) {
-            if (firstTemp.element.equals(o)) {
+            if (Objects.equals(firstTemp.element, e)) {
                 return true;
             }
             firstTemp = firstTemp.next;
@@ -223,7 +219,7 @@ public class LinkedList<E> implements List<E> {
 
         int index = 0;
         while (firstTemp != null) {
-            if (firstTemp.element.equals(e)) {
+            if (Objects.equals(firstTemp.element, e)) {
                 return index;
             }
             firstTemp = firstTemp.next;
@@ -239,7 +235,7 @@ public class LinkedList<E> implements List<E> {
 
         int index = length;
         while (lastTemp != null) {
-            if (lastTemp.element.equals(e)) {
+            if (Objects.equals(lastTemp.element, e)) {
                 return index;
             }
             lastTemp = lastTemp.pre;
@@ -252,11 +248,6 @@ public class LinkedList<E> implements List<E> {
     @Override
     public int size() {
         return length;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return length == 0;
     }
 
     /**
@@ -280,59 +271,18 @@ public class LinkedList<E> implements List<E> {
     }
 
     @Override
-    public Object[] toArray() {
-        Object[] results = new Object[length];
-        toArray(head, results);
-        index = 0;
-        return results;
-    }
-
-    @Override
     public E[] toArray(E[] array) {
         if (array == null || array.length < length) {
             array = (E[]) java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), length);
         }
 
-        E[] results = array;
-        toArray_(head, results);
-        index = 0;
-        return results;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("{");
-
-        Node<E> current = head;
-        while (current != null) {
-            if (current.next == null) {
-                sb.append(current.element.toString());
-            } else {
-                sb.append(current.element.toString()).append(", ");
-            }
-            current = current.next;
+        int i = 0;
+        Node<E> cursor = head;
+        while (cursor != null) {
+            array[i++] = cursor.element;
+            cursor = cursor.next;
         }
-
-        sb.append('}');
-        return sb.toString();
-    }
-
-    private void toArray(Node<E> node, Object[] array) {
-        if (node == null) {
-            return;
-        }
-
-        array[index++] = node.element;
-        toArray(node.next, array);
-    }
-
-    private void toArray_(Node<E> node, E[] array) {
-        if (node == null) {
-            return;
-        }
-
-        array[index++] = node.element;
-        toArray(node.next, array);
+        return array;
     }
 
     private E remove(Node<E> delNode) {
@@ -350,8 +300,6 @@ public class LinkedList<E> implements List<E> {
              * 置空前后索引
              */
             head = tail = null;
-            delNode.next = null;
-            delNode.pre = null;
         } else if (delNode.pre == null) {
             /*
              * 头节点前移
@@ -385,12 +333,30 @@ public class LinkedList<E> implements List<E> {
         }
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[");
+
+        Node<E> current = head;
+        while (current != null) {
+            if (current.next == null) {
+                sb.append(current.element.toString());
+            } else {
+                sb.append(current.element.toString()).append(", ");
+            }
+            current = current.next;
+        }
+
+        sb.append("]");
+        return sb.toString();
+    }
+
     /**
      * Node
      *
      * @param <E>
      */
-    private static class Node<E> {
+    static class Node<E> {
         Node<E> pre;
         E element;
         Node<E> next;

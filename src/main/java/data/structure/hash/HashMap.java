@@ -1,11 +1,10 @@
-package data.structure.map;
+package data.structure.hash;
 
 import data.structure.Map;
 import data.structure.Set;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -61,7 +60,7 @@ public class HashMap<K, V> implements Map<K, V> {
         }
 
         while (true) {
-            if (node.key.equals(key)) {
+            if (Objects.equals(node.key, key)) {
                 V oldVal = node.val;
                 node.val = val;
                 return oldVal;
@@ -78,7 +77,7 @@ public class HashMap<K, V> implements Map<K, V> {
         }
     }
 
-    Node<K, V> findNode(int hash, K key) {
+    Node<K, V> findNode(int hash, Object key) {
         if (table == null) return null;
 
         Node<K, V> node = table[hash];
@@ -90,7 +89,7 @@ public class HashMap<K, V> implements Map<K, V> {
         return null;
     }
 
-    V getVal(int hash, K key) {
+    V getVal(int hash, Object key) {
         return Optional.ofNullable(findNode(hash, key)).map(e -> e.val).orElse(null);
     }
 
@@ -134,6 +133,10 @@ public class HashMap<K, V> implements Map<K, V> {
 
     @Override
     public V remove(K key) {
+        return Optional.ofNullable(removeNode(key)).map(Entry::getValue).orElse(null);
+    }
+
+    Entry<K, V> removeNode(K key) {
         if (table == null) return null;
 
         int hash = hash(key);
@@ -148,7 +151,7 @@ public class HashMap<K, V> implements Map<K, V> {
                 }
 
                 size--;
-                return curNode.val;
+                return curNode;
             }
 
             prevNode = curNode;
@@ -159,17 +162,22 @@ public class HashMap<K, V> implements Map<K, V> {
     }
 
     @Override
-    public V get(K key) {
+    public V get(Object key) {
         return getVal(hash(key), key);
     }
 
     @Override
-    public boolean containsKey(K key) {
+    public V getOrDefault(Object key, V val) {
+        return Optional.ofNullable(get(key)).orElse(val);
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
         return findNode(hash(key), key) != null;
     }
 
     @Override
-    public boolean containsValue(V value) {
+    public boolean containsValue(Object value) {
         if (table == null) return false;
 
         for (Node<K, V> node : table) {
@@ -201,7 +209,7 @@ public class HashMap<K, V> implements Map<K, V> {
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        Set<Entry<K, V>> set = new HashSet<>(1, size);
+        Set<Entry<K, V>> set = new HashSet<Entry<K, V>>(1, size);
         foreach(set::add);
 
         return set;
@@ -209,7 +217,7 @@ public class HashMap<K, V> implements Map<K, V> {
 
     @Override
     public Set<K> entryKey() {
-        Set<K> set = new HashSet<>(1, size);
+        Set<K> set = new HashSet<K>(1, size);
         foreach(e -> set.add(e.key));
 
         return set;
@@ -228,8 +236,9 @@ public class HashMap<K, V> implements Map<K, V> {
         return sb.replace(sb.length() - 2, sb.length(), "").append("}").toString();
     }
 
-    private void foreach(Consumer<Node<K, V>> consumer) {
+    void foreach(Consumer<Node<K, V>> consumer) {
         if (table == null) return;
+
         for (Node<K, V> kvNode : table) {
             if (kvNode == null) continue;
             while (kvNode != null) {

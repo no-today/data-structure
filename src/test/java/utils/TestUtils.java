@@ -10,7 +10,7 @@ public class TestUtils {
 
     private static final Random R = new Random();
 
-    public static Integer[] genergateArray(int count, int bound) {
+    public static Integer[] generateArray(int count, int bound) {
         Integer[] integers = new Integer[count];
         for (int i = 0; i < count; i++) {
             integers[i] = Math.abs(R.nextInt(bound));

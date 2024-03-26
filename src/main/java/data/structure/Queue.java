@@ -4,7 +4,7 @@ package data.structure;
  * @author no-today
  * @date 2020/3/21 23:47
  */
-public interface Queue<E> {
+public interface Queue<E> extends Collection<E> {
 
     /**
      * Add element to queue
@@ -26,23 +26,4 @@ public interface Queue<E> {
      * @return first element
      */
     E front();
-
-    /**
-     * Get queue size
-     *
-     * @return size
-     */
-    int size();
-
-    /**
-     * Queue is empty
-     *
-     * @return is empty
-     */
-    boolean isEmpty();
-
-    /**
-     * Clear all elements
-     */
-    void clear();
 }

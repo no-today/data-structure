@@ -2,6 +2,8 @@ package data.structure.list;
 
 import data.structure.List;
 
+import java.util.Objects;
+
 /**
  * @author no-today
  * @date 2018/6/20
@@ -14,55 +16,49 @@ public class ArrayList<E> implements List<E> {
     private static final int DEFAULT_CAPACITY = 8;
 
     /**
-     * Shrinkage factor < 4/1
-     */
-    private static final float SHRINKAGE_COEFFICIENT = 0.25F;
-
-    /**
      * Element domain
      */
     private E[] elements;
 
     /**
-     * Initial capacity, Total capacity
+     * Actual capacity
      */
-    private final int initCapacity;
     private int capacity;
 
     /**
-     * Effective element
+     * Used capacity
      */
     private int size;
 
-    public ArrayList() {
-        capacity = initCapacity = DEFAULT_CAPACITY;
-        elements = (E[]) new Object[initCapacity];
-    }
-
-    public ArrayList(int capacity) {
-        this.capacity = initCapacity = capacity;
-        elements = (E[]) new Object[initCapacity];
-    }
+    private int resizeCount;
 
     public ArrayList(E[] array) {
-        capacity = initCapacity = array.length;
-        elements = (E[]) new Object[initCapacity];
-        for (int i = 0; i < array.length; i++) {
-            elements[i] = array[i];
-        }
+        capacity = array.length;
+        elements = (E[]) new Object[capacity];
+        System.arraycopy(array, 0, elements, 0, array.length);
         size = array.length;
     }
 
+    public ArrayList(int capacity) {
+        this.capacity = capacity;
+        elements = (E[]) new Object[capacity];
+    }
+
+    public ArrayList() {
+        this(DEFAULT_CAPACITY);
+    }
+
     @Override
-    public void add(E element) {
-        resizeCapacity();
+    public boolean add(E element) {
+        checkResizeCapacity();
 
         elements[size++] = element;
+        return true;
     }
 
     @Override
     public void addFirst(E element) {
-        resizeCapacity();
+        checkResizeCapacity();
 
         rightShift(0);
         elements[0] = element;
@@ -74,7 +70,6 @@ public class ArrayList<E> implements List<E> {
         add(element);
     }
 
-
     @Override
     public E remove(int index) {
         checkIndexOut(index);
@@ -83,47 +78,34 @@ public class ArrayList<E> implements List<E> {
         leftShift(index);
         size--;
 
-        resizeCapacity();
-
         return element;
     }
 
     @Override
     public boolean remove(E element) {
-        boolean flag = false;
-
-        if (element == null) {
-            return flag;
-        }
-
-
         for (int i = 0; i < size; i++) {
-            if (elements[i] != null && elements[i].equals(element)) {
+            if (Objects.equals(elements[i], element)) {
                 leftShift(i);
                 size--;
-                flag = true;
+                return true;
             }
         }
 
-        return flag;
+        return false;
     }
 
     @Override
     public E removeFirst() {
         E element = elements[0];
-
         leftShift(0);
         size--;
-
         return element;
     }
 
     @Override
     public E removeLast() {
         E element = elements[size - 1];
-
         elements[--size] = null;
-
         return element;
     }
 
@@ -144,9 +126,9 @@ public class ArrayList<E> implements List<E> {
     }
 
     @Override
-    public boolean contains(E element) {
+    public boolean contains(Object element) {
         for (int i = 0; i < size; i++) {
-            if (elements[i].equals(element)) {
+            if (Objects.equals(elements[i], element)) {
                 return true;
             }
         }
@@ -158,7 +140,7 @@ public class ArrayList<E> implements List<E> {
         int index = -1;
 
         for (int i = 0; i < size; i++) {
-            if (elements[i].equals(element)) {
+            if (Objects.equals(elements[i], element)) {
                 return i;
             }
         }
@@ -171,7 +153,7 @@ public class ArrayList<E> implements List<E> {
         int index = -1;
 
         for (int i = size - 1; i >= 0; i--) {
-            if (elements[i].equals(element)) {
+            if (Objects.equals(elements[i], element)) {
                 return i;
             }
         }
@@ -184,28 +166,15 @@ public class ArrayList<E> implements List<E> {
         return size;
     }
 
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
+    public int getResizeCount() {
+        return resizeCount;
     }
 
     @Override
     public void clear() {
-        for (int i = 0; i < size; i++) {
-            elements[i] = null;
-        }
         size = 0;
-        capacity = initCapacity;
-        copyArray();
-    }
-
-    @Override
-    public Object[] toArray() {
-        E[] array = (E[]) new Object[size];
-        for (int i = 0; i < size; i++) {
-            array[i] = elements[i];
-        }
-        return array;
+        capacity = DEFAULT_CAPACITY;
+        elements = (E[]) new Object[capacity];
     }
 
     @Override
@@ -214,15 +183,13 @@ public class ArrayList<E> implements List<E> {
             array = (E[]) java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), size);
         }
 
-        for (int i = 0; i < size; i++) {
-            array[i] = elements[i];
-        }
+        System.arraycopy(elements, 0, array, 0, size);
         return array;
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("{");
+        final StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < size; i++) {
             if (i == size - 1) {
                 sb.append(elements[i]);
@@ -230,7 +197,7 @@ public class ArrayList<E> implements List<E> {
                 sb.append(elements[i]).append(", ");
             }
         }
-        sb.append('}');
+        sb.append("]");
         return sb.toString();
     }
 
@@ -279,7 +246,7 @@ public class ArrayList<E> implements List<E> {
     /**
      * Reallocate memory size
      */
-    private void resizeCapacity() {
+    private void checkResizeCapacity() {
         /*
          * 满了才扩容
          *
@@ -288,23 +255,12 @@ public class ArrayList<E> implements List<E> {
          */
         if (size == capacity - 1) {
             capacity = capacity * 2;
-            copyArray();
-        } else if (capacity > initCapacity && size < capacity * SHRINKAGE_COEFFICIENT) {
-            capacity = capacity / 2;
-            copyArray();
+
+            E[] newElements = (E[]) new Object[capacity];
+            System.arraycopy(elements, 0, newElements, 0, size);
+            elements = newElements;
+
+            resizeCount++;
         }
     }
-
-    /**
-     * O(n)
-     */
-    private void copyArray() {
-        E[] newElements = (E[]) new Object[capacity];
-        for (int i = 0; i < size; i++) {
-            newElements[i] = elements[i];
-        }
-        elements = newElements;
-    }
-
-
 }

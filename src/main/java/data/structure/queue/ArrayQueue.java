@@ -2,6 +2,9 @@ package data.structure.queue;
 
 import data.structure.Queue;
 
+import java.lang.reflect.Array;
+import java.util.Objects;
+
 /**
  * 循环数组实现 最后一个元素不可用
  * <p>
@@ -21,7 +24,7 @@ public class ArrayQueue<E> implements Queue<E> {
      * head :下一个出队的元素位置
      * tail : (headIndex + count - 1) mod capacity
      */
-    private int head, count = 0;
+    private int head, size = 0;
 
     public ArrayQueue() {
         this(DEFAULT_CAPACITY);
@@ -29,6 +32,28 @@ public class ArrayQueue<E> implements Queue<E> {
 
     public ArrayQueue(int capacity) {
         this.elements = (E[]) new Object[capacity];
+    }
+
+    @Override
+    public boolean add(E e) {
+        enqueue(e);
+        return true;
+    }
+
+    @Override
+    public boolean remove(E e) {
+        for (int i = head; i < head + size; i++) {
+            if (Objects.equals(elements[i], e)) {
+                // left shift
+                for (int j = i; j < size; j++) {
+                    elements[j] = elements[j + 1];
+                }
+                size--;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -41,8 +66,8 @@ public class ArrayQueue<E> implements Queue<E> {
     public void enqueue(E element) {
         resizeCapacity();
 
-        elements[(head + count) % elements.length] = element;
-        count++;
+        elements[(head + size) % elements.length] = element;
+        size++;
     }
 
     @Override
@@ -54,7 +79,7 @@ public class ArrayQueue<E> implements Queue<E> {
         E element = elements[head % elements.length];
         elements[head % elements.length] = null;
         head++;
-        count--;
+        size--;
 
         return element;
     }
@@ -70,30 +95,45 @@ public class ArrayQueue<E> implements Queue<E> {
 
     @Override
     public int size() {
-        return count;
+        return size;
     }
 
     @Override
-    public boolean isEmpty() {
-        return count == 0;
+    public boolean contains(Object e) {
+        for (int i = head; i < head + size; i++) {
+            if (Objects.equals(elements[i], e)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void clear() {
-        for (int i = head; i < head + count; i++) {
+        for (int i = head; i < head + size; i++) {
             elements[i % elements.length] = null;
         }
 
-        head = count = 0;
+        head = size = 0;
+    }
+
+    @Override
+    public E[] toArray(E[] arr) {
+        if (arr.length < size) {
+            arr = (E[]) Array.newInstance(arr.getClass().getComponentType(), size);
+        }
+
+        System.arraycopy(elements, 0, arr, 0, size);
+        return arr;
     }
 
     private void resizeCapacity() {
         // 队列已满, 扩容
-        if (count == elements.length) {
+        if (size == elements.length) {
             int capacity = elements.length * 2;
 
             E[] newElements = (E[]) new Object[capacity];
-            System.arraycopy(elements, head, newElements, 0, count);
+            System.arraycopy(elements, head, newElements, 0, size);
             elements = newElements;
         }
     }

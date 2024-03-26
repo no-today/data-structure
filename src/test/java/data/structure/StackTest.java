@@ -1,6 +1,7 @@
-package data.structure.stack;
+package data.structure;
 
 
+import data.structure.stack.ArrayStack;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

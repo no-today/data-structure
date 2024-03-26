@@ -1,5 +1,8 @@
 package data.structure.skiplist;
 
+import data.structure.Collection;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +14,7 @@ import java.util.List;
  * @author no-today
  * @date 2022/04/30 14:25
  */
-public class SkipList<E extends Comparable<E>> {
+public class SkipList<E extends Comparable<E>> implements Collection<E> {
 
     private static final int DEFAULT_MAX_LEVEL = 16;
 
@@ -25,9 +28,9 @@ public class SkipList<E extends Comparable<E>> {
 
     private int currentLevel;
 
-    private long length;
+    private int length;
 
-    private final SkipListNode<E> root;
+    private SkipListNode<E> root;
 
     public SkipList() {
         this(DEFAULT_MAX_LEVEL, DEFAULT_P_FACTOR);
@@ -53,7 +56,7 @@ public class SkipList<E extends Comparable<E>> {
      * 当前节点的右节点比新增元素大, 说明应该在 当前节点 和 当前节点的右节点中间插入新节点.
      * while cur.next != null and new < cur.next: cur = cur.next
      */
-    public void add(E element) {
+    public boolean add(E element) {
         // 随机索引 N 层
         int level = randomIndexLevel();
         // refresh currentLevel
@@ -76,6 +79,7 @@ public class SkipList<E extends Comparable<E>> {
         }
 
         length++;
+        return true;
     }
 
     public boolean contains(E element) {
@@ -113,12 +117,19 @@ public class SkipList<E extends Comparable<E>> {
                     length--;
                 }
 
-                // 当前层可能还存在相同元素
-                i++;
+                // 只删除第一个匹配的而不是全部
+                // i++;
             }
         }
 
         return deleted;
+    }
+
+    @Override
+    public void clear() {
+        currentLevel = 1;
+        length = 0;
+        root = new SkipListNode<>(null, maxLevel);
     }
 
     /**
@@ -169,8 +180,31 @@ public class SkipList<E extends Comparable<E>> {
         return array;
     }
 
-    public long size() {
+    public int size() {
         return length;
+    }
+
+    @Override
+    public boolean contains(Object e) {
+        return contains((E) e);
+    }
+
+    @Override
+    public E[] toArray(E[] arr) {
+        if (arr.length < length) {
+            arr = (E[]) Array.newInstance(arr.getClass().getComponentType(), length);
+        }
+
+        // 直接遍历底层
+        int i = 0;
+        SkipListNode<E> cur = root.next[0];
+        while (cur != null) {
+            arr[i++] = cur.element;
+
+            cur = cur.next[0];
+        }
+
+        return arr;
     }
 
     @Override
@@ -200,7 +234,7 @@ public class SkipList<E extends Comparable<E>> {
      * 返回的节点可能与 element 所处节点的值相同, 因为右节点必定是 大于的
      */
     private SkipListNode<E> findInsertPosition(SkipListNode<E> node, int level, E element) {
-        // TODO 如需降序: 右节点小于等于 目标 时中断
+        // 如需降序: 右节点小于等于 目标 时中断
 
         // 没有 next(右) 时停止
         // 右节点大于等于 目标 时中断, 返回当前节点
@@ -223,7 +257,7 @@ public class SkipList<E extends Comparable<E>> {
 
     private static class SkipListNode<E> {
 
-        private E element;
+        private final E element;
 
         /**
          * N 层都有不同的 next 节点
@@ -246,7 +280,7 @@ public class SkipList<E extends Comparable<E>> {
          * <p>
          * 这样关联起来之后, 任意节点都可以知道自己 N层 的 right、down 是哪个节点
          */
-        private SkipListNode<E>[] next;
+        private final SkipListNode<E>[] next;
 
         public SkipListNode(E element, int level) {
             this.element = element;
@@ -259,11 +293,10 @@ public class SkipList<E extends Comparable<E>> {
 
         @Override
         public String toString() {
-            final StringBuilder sb = new StringBuilder("{");
-            sb.append("score=").append(element);
-            sb.append(", levels=").append(next.length);
-            sb.append('}');
-            return sb.toString();
+            String sb = "{" + "score=" + element +
+                    ", levels=" + next.length +
+                    '}';
+            return sb;
         }
     }
 }

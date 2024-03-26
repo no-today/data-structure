@@ -27,6 +27,7 @@ public class LinkedQueue<E> implements Queue<E> {
 
     @Override
     public E front() {
+        if (linkedList.isEmpty()) return null;
         return linkedList.get(0);
     }
 
@@ -36,8 +37,24 @@ public class LinkedQueue<E> implements Queue<E> {
     }
 
     @Override
-    public boolean isEmpty() {
-        return linkedList.isEmpty();
+    public boolean contains(Object e) {
+        return linkedList.contains(e);
+    }
+
+    @Override
+    public E[] toArray(E[] arr) {
+        return linkedList.toArray(arr);
+    }
+
+    @Override
+    public boolean add(E e) {
+        enqueue(e);
+        return true;
+    }
+
+    @Override
+    public boolean remove(E e) {
+        return linkedList.remove(e);
     }
 
     @Override

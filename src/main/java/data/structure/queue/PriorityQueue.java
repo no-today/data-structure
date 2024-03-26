@@ -14,8 +14,8 @@ public class PriorityQueue<E extends Comparable<E>> implements Queue<E> {
 
     private final ArrayList<E> array;
 
-    public PriorityQueue(int capacity) {
-        this.array = new ArrayList<>(capacity);
+    public PriorityQueue() {
+        this.array = new ArrayList<>();
     }
 
     @Override
@@ -53,8 +53,24 @@ public class PriorityQueue<E extends Comparable<E>> implements Queue<E> {
     }
 
     @Override
-    public boolean isEmpty() {
-        return array.isEmpty();
+    public boolean contains(Object e) {
+        return array.contains(e);
+    }
+
+    @Override
+    public E[] toArray(E[] arr) {
+        return array.toArray(arr);
+    }
+
+    @Override
+    public boolean add(E e) {
+        enqueue(e);
+        return true;
+    }
+
+    @Override
+    public boolean remove(E e) {
+        return array.remove(e);
     }
 
     @Override
