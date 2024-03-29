@@ -1,10 +1,11 @@
-package data.structure.skiplist;
+package data.structure.sorted;
 
 import data.structure.Collection;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * 跳跃列表
@@ -190,21 +191,25 @@ public class SkipList<E extends Comparable<E>> implements Collection<E> {
     }
 
     @Override
+    public void foreach(BiConsumer<E, Integer> consumer) {
+        // 直接遍历底层
+        int i = 0;
+        SkipListNode<E> cur = root.next[0];
+        while (cur != null) {
+            consumer.accept(cur.element, i++);
+            cur = cur.next[0];
+        }
+    }
+
+    @Override
     public E[] toArray(E[] arr) {
         if (arr.length < length) {
             arr = (E[]) Array.newInstance(arr.getClass().getComponentType(), length);
         }
 
-        // 直接遍历底层
-        int i = 0;
-        SkipListNode<E> cur = root.next[0];
-        while (cur != null) {
-            arr[i++] = cur.element;
-
-            cur = cur.next[0];
-        }
-
-        return arr;
+        E[] finalArr = arr;
+        foreach((e, i) -> finalArr[i] = e);
+        return finalArr;
     }
 
     @Override

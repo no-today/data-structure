@@ -4,6 +4,7 @@ import data.structure.Deque;
 
 import java.lang.reflect.Array;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 /**
  * 双向队列
@@ -164,18 +165,24 @@ public class LinkedDeque<E> implements Deque<E> {
     }
 
     @Override
+    public void foreach(BiConsumer<E, Integer> consumer) {
+        Node<E> cursor = this.head;
+        int i = 0;
+        while (cursor != null) {
+            consumer.accept(cursor.element, i++);
+            cursor = cursor.next;
+        }
+    }
+
+    @Override
     public E[] toArray(E[] arr) {
         if (arr.length < size) {
             arr = (E[]) Array.newInstance(arr.getClass().getComponentType(), size);
         }
 
-        Node<E> cursor = this.head;
-        int i = 0;
-        while (cursor != null) {
-            arr[i++] = cursor.element;
-            cursor = cursor.next;
-        }
-        return arr;
+        E[] finalArr = arr;
+        foreach((e, i) -> finalArr[i] = e);
+        return finalArr;
     }
 
     static class Node<T> {

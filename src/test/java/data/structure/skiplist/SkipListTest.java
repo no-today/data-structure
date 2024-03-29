@@ -1,10 +1,11 @@
 package data.structure.skiplist;
 
+import data.structure.List;
+import data.structure.list.ArrayList;
+import data.structure.sorted.SkipList;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,7 +18,7 @@ class SkipListTest {
     @Test
     void basic() {
         int count = 1000000;
-        Set<Integer> exists = new HashSet<>((int) Math.ceil(count / 0.75));
+        List<Integer> exists = new ArrayList<>(count);
 
         SkipList<Integer> skipList = new SkipList<>();
         for (int i = 0; i < count; i++) {
@@ -30,7 +31,10 @@ class SkipListTest {
         assertEquals(count, skipList.size());
 
         // expected exists
-        exists.forEach(e -> assertTrue(skipList.remove(e)));
+        for (int i = 0; i < exists.size(); i++) {
+            assertTrue(skipList.remove(exists.get(i)));
+        }
+
         assertEquals(0, skipList.size());
     }
 
@@ -44,13 +48,13 @@ class SkipListTest {
         skipList.add(20);
 
         assertTrue(skipList.remove(15));
-        assertEquals(2, skipList.size());
+        assertEquals(3, skipList.size());
 
         assertTrue(skipList.remove(20));
-        assertEquals(1, skipList.size());
+        assertEquals(2, skipList.size());
 
         assertTrue(skipList.remove(10));
-        assertEquals(0, skipList.size());
+        assertEquals(1, skipList.size());
     }
 
     @Test

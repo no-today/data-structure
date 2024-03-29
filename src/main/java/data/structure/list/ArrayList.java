@@ -3,6 +3,8 @@ package data.structure.list;
 import data.structure.List;
 
 import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * @author no-today
@@ -40,6 +42,7 @@ public class ArrayList<E> implements List<E> {
     }
 
     public ArrayList(int capacity) {
+        if (capacity < 0) capacity = DEFAULT_CAPACITY;
         this.capacity = capacity;
         elements = (E[]) new Object[capacity];
     }
@@ -178,13 +181,20 @@ public class ArrayList<E> implements List<E> {
     }
 
     @Override
-    public E[] toArray(E[] array) {
-        if (array == null || array.length < size) {
-            array = (E[]) java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), size);
+    public void foreach(BiConsumer<E, Integer> consumer) {
+        for (int i = 0; i < size; i++) {
+            consumer.accept(elements[i], i);
+        }
+    }
+
+    @Override
+    public E[] toArray(E[] arr) {
+        if (arr.length < size) {
+            arr = (E[]) java.lang.reflect.Array.newInstance(arr.getClass().getComponentType(), size);
         }
 
-        System.arraycopy(elements, 0, array, 0, size);
-        return array;
+        System.arraycopy(elements, 0, arr, 0, size);
+        return arr;
     }
 
     @Override
@@ -253,8 +263,8 @@ public class ArrayList<E> implements List<E> {
          * 小于四分之一缩容
          * 1. 容量小于初始化容量时不做缩容
          */
-        if (size == capacity - 1) {
-            capacity = capacity * 2;
+        if (size == capacity - 1 || capacity == 0) {
+            capacity = capacity == 0 ? DEFAULT_CAPACITY : capacity * 2;
 
             E[] newElements = (E[]) new Object[capacity];
             System.arraycopy(elements, 0, newElements, 0, size);

@@ -3,6 +3,8 @@ package data.structure.queue;
 import data.structure.Queue;
 import data.structure.list.ArrayList;
 
+import java.util.function.BiConsumer;
+
 /**
  * 优先队列 二叉堆实现
  * <p>
@@ -55,6 +57,11 @@ public class PriorityQueue<E extends Comparable<E>> implements Queue<E> {
     @Override
     public boolean contains(Object e) {
         return array.contains(e);
+    }
+
+    @Override
+    public void foreach(BiConsumer<E, Integer> consumer) {
+        array.foreach(consumer);
     }
 
     @Override

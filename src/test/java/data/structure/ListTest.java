@@ -5,19 +5,19 @@ import data.structure.list.ArrayList;
 import data.structure.list.LinkedList;
 import org.junit.jupiter.api.Test;
 
-import static data.structure.utils.CollectionTests.testsCollection;
+import static data.structure.utils.DST.collection;
 
 public class ListTest {
 
     @Test
     public void array() {
         ArrayList<String> list = new ArrayList<>();
-        testsCollection(list);
+        collection(list);
         System.out.println("Resize count: " + list.getResizeCount());
     }
 
     @Test
     public void linked() {
-        testsCollection(new LinkedList<>());
+        collection(new LinkedList<>());
     }
 }

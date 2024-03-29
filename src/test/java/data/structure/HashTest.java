@@ -4,8 +4,8 @@ import data.structure.hash.HashMap;
 import data.structure.hash.HashSet;
 import org.junit.jupiter.api.Test;
 
-import static data.structure.utils.CollectionTests.testsCollection;
-import static data.structure.utils.CollectionTests.testsMap;
+import static data.structure.utils.DST.collection;
+import static data.structure.utils.DST.map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -17,12 +17,12 @@ class HashTest {
 
     @Test
     void hashSet() {
-        testsCollection(new HashSet<>());
+        collection(new HashSet<>());
     }
 
     @Test
     void test() {
-        testsMap(new HashMap<>());
+        map(new HashMap<>());
     }
 
     @Test

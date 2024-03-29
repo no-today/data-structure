@@ -1,5 +1,7 @@
 package data.structure;
 
+import java.util.function.BiConsumer;
+
 /**
  * @author no-today
  * @date 2024/03/25 10:56
@@ -26,9 +28,7 @@ public interface Collection<E> {
 
     boolean contains(Object e);
 
-    default Object[] toArray() {
-        return toArray((E[]) new Object[0]);
-    }
+    void foreach(BiConsumer<E, Integer> consumer);
 
     E[] toArray(E[] arr);
 }

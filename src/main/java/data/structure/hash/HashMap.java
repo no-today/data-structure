@@ -5,7 +5,7 @@ import data.structure.Set;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 /**
  * @author no-today
@@ -31,6 +31,8 @@ public class HashMap<K, V> implements Map<K, V> {
     private int size;
 
     public HashMap(float threshold, int capacity) {
+        if (threshold <= 0 || threshold > 1) threshold = DEFAULT_THRESHOLD;
+        if (capacity < 0) capacity = DEFAULT_CAPACITY;
         this.threshold = threshold;
         this.capacity = capacity;
     }
@@ -210,15 +212,15 @@ public class HashMap<K, V> implements Map<K, V> {
     @Override
     public Set<Entry<K, V>> entrySet() {
         Set<Entry<K, V>> set = new HashSet<Entry<K, V>>(1, size);
-        foreach(set::add);
+        foreach((e, i) -> set.add(e));
 
         return set;
     }
 
     @Override
     public Set<K> entryKey() {
-        Set<K> set = new HashSet<K>(1, size);
-        foreach(e -> set.add(e.key));
+        Set<K> set = new HashSet<>(1, size);
+        foreach((e, i) -> set.add(e.getKey()));
 
         return set;
     }
@@ -226,23 +228,18 @@ public class HashMap<K, V> implements Map<K, V> {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("HashMap{");
-        foreach(e -> sb.append(e.toString()).append(", "));
+        foreach((e, i) -> sb.append(e.toString()).append(", "));
         return sb.replace(sb.length() - 2, sb.length(), "").append("}").toString();
     }
 
-    public String toStringK() {
-        StringBuilder sb = new StringBuilder("{");
-        foreach(e -> sb.append(e.toStringK()).append(", "));
-        return sb.replace(sb.length() - 2, sb.length(), "").append("}").toString();
-    }
-
-    void foreach(Consumer<Node<K, V>> consumer) {
+    public void foreach(BiConsumer<Entry<K, V>, Integer> consumer) {
         if (table == null) return;
 
+        int i = 0;
         for (Node<K, V> kvNode : table) {
             if (kvNode == null) continue;
             while (kvNode != null) {
-                consumer.accept(kvNode);
+                consumer.accept(kvNode, i++);
                 kvNode = kvNode.next;
             }
         }
@@ -291,10 +288,6 @@ public class HashMap<K, V> implements Map<K, V> {
         public String toString() {
             String valStr = (val instanceof Number || val instanceof Boolean) ? String.valueOf(val) : "\"" + val + "\"";
             return String.format("\"%s\": %s", key, valStr);
-        }
-
-        public String toStringK() {
-            return (key instanceof Number || key instanceof Boolean || key instanceof Map.Entry) ? String.valueOf(key) : "\"" + key + "\"";
         }
     }
 }

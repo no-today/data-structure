@@ -3,6 +3,7 @@ package data.structure.list;
 import data.structure.List;
 
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 /**
  * @author no-today
@@ -271,18 +272,24 @@ public class LinkedList<E> implements List<E> {
     }
 
     @Override
-    public E[] toArray(E[] array) {
-        if (array == null || array.length < length) {
-            array = (E[]) java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), length);
-        }
-
+    public void foreach(BiConsumer<E, Integer> consumer) {
         int i = 0;
         Node<E> cursor = head;
         while (cursor != null) {
-            array[i++] = cursor.element;
+            consumer.accept(cursor.element, i++);
             cursor = cursor.next;
         }
-        return array;
+    }
+
+    @Override
+    public E[] toArray(E[] arr) {
+        if (arr.length < length) {
+            arr = (E[]) java.lang.reflect.Array.newInstance(arr.getClass().getComponentType(), length);
+        }
+
+        E[] finalArr = arr;
+        foreach((e, i) -> finalArr[i] = e);
+        return finalArr;
     }
 
     private E remove(Node<E> delNode) {

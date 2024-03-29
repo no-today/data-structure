@@ -4,6 +4,7 @@ import data.structure.Queue;
 
 import java.lang.reflect.Array;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 /**
  * 循环数组实现 最后一个元素不可用
@@ -118,13 +119,22 @@ public class ArrayQueue<E> implements Queue<E> {
     }
 
     @Override
+    public void foreach(BiConsumer<E, Integer> consumer) {
+        int index = 0;
+        for (int i = head; i < head + size; i++) {
+            consumer.accept(elements[i % elements.length], index++);
+        }
+    }
+
+    @Override
     public E[] toArray(E[] arr) {
         if (arr.length < size) {
             arr = (E[]) Array.newInstance(arr.getClass().getComponentType(), size);
         }
 
-        System.arraycopy(elements, 0, arr, 0, size);
-        return arr;
+        E[] finalArr = arr;
+        foreach((e, i) -> finalArr[i] = e);
+        return finalArr;
     }
 
     private void resizeCapacity() {

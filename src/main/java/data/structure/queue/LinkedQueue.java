@@ -3,6 +3,8 @@ package data.structure.queue;
 import data.structure.Queue;
 import data.structure.list.LinkedList;
 
+import java.util.function.BiConsumer;
+
 /**
  * @author no-today
  * @date 2020/3/22 10:00
@@ -39,6 +41,11 @@ public class LinkedQueue<E> implements Queue<E> {
     @Override
     public boolean contains(Object e) {
         return linkedList.contains(e);
+    }
+
+    @Override
+    public void foreach(BiConsumer<E, Integer> consumer) {
+        linkedList.foreach(consumer);
     }
 
     @Override

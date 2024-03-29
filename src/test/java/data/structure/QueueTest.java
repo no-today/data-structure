@@ -8,29 +8,29 @@ import data.structure.queue.PriorityQueue;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
-import static data.structure.utils.CollectionTests.testsCollection;
+import static data.structure.utils.DST.collection;
 import static org.junit.jupiter.api.Assertions.*;
 
 class QueueTest {
 
     @Test
     void arrayQueue() {
-        testsCollection(new ArrayQueue<>());
+        collection(new ArrayQueue<>());
     }
 
     @Test
     void linkedQueue() {
-        testsCollection(new LinkedQueue<>());
+        collection(new LinkedQueue<>());
     }
 
     @Test
     void priorityQueue() {
-        testsCollection(new PriorityQueue<>());
+        collection(new PriorityQueue<>());
     }
 
     @Test
     void linkedDeque() {
-        testsCollection(new LinkedDeque<>());
+        collection(new LinkedDeque<>());
     }
 
     @Test
