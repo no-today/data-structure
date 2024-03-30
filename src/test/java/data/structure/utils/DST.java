@@ -70,9 +70,7 @@ public class DST {
         String[] array = map.entryKey().toArray(new String[0]);
         assertEquals(array.length, map.size());
 
-        List.of(array).forEach(e -> {
-            assertNotNull(map.remove(e));
-        });
+        List.of(array).forEach(e -> assertNotNull(map.remove(e)));
 
         assertTrue(map.isEmpty());
     }
