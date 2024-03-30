@@ -1,6 +1,6 @@
 package data.structure.benchmark;
 
-import data.structure.tree.AVLTree;
+import data.structure.sorted.AVLTree;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;

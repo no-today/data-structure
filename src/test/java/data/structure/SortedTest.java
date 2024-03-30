@@ -1,19 +1,19 @@
 package data.structure;
 
+import data.structure.sorted.AVLTree;
 import data.structure.sorted.BSTree;
 import data.structure.sorted.SkipList;
 import org.junit.jupiter.api.Test;
 
 import static data.structure.utils.DST.collection;
-import static data.structure.utils.DST.sortedSet;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static data.structure.utils.DST.sorted;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author no-today
  * @date 2024/03/22 10:24
  */
-class SortedSetTest {
+class SortedTest {
 
     @Test
     void skipList() {
@@ -22,7 +22,17 @@ class SortedSetTest {
 
     @Test
     void bsTree() {
-        BSTree<Integer> tree = new BSTree<>();
+        sorted(new BSTree<>());
+        tree(new BSTree<>());
+    }
+
+    @Test
+    void avlTree() {
+        sorted(new AVLTree<>());
+        tree(new AVLTree<>());
+    }
+
+    private static void tree(BSTree<Integer> tree) {
         tree.add(100);
         tree.add(50);
         tree.add(150);
@@ -44,9 +54,19 @@ class SortedSetTest {
         assertArrayEquals(new Integer[]{100}, tree.range(100, 125, 999).toArray(new Integer[0]));
 
         assertEquals(10, tree.size());
-        tree.remove(200);
+        tree.removeMax();
         assertEquals(9, tree.size());
 
-        sortedSet(new BSTree<>());
+        tree.clear();
+        assertTrue(tree.isEmpty());
+
+        for (int i = 0; i < 10000; i++) {
+            assertTrue(tree.add(i));
+            assertTrue(tree.contains(i));
+            assertEquals(i + 1, tree.size());
+        }
+
+        for (int i = 0; i < 10000; i++) assertTrue(tree.remove(i));
+        assertTrue(tree.isEmpty());
     }
 }

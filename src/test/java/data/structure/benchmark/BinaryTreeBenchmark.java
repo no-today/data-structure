@@ -1,6 +1,6 @@
 package data.structure.benchmark;
 
-import data.structure.tree.BinarySearchTree;
+import data.structure.sorted.BSTree;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;
@@ -15,7 +15,7 @@ public class BinaryTreeBenchmark {
     @Param({"1000000", "10000000"})
     public int size;
 
-    BinarySearchTree<String> tree;
+    BSTree<String> tree;
 
     public static void main(String[] args) throws Exception {
         String simpleName = BinaryTreeBenchmark.class.getSimpleName();
@@ -29,7 +29,7 @@ public class BinaryTreeBenchmark {
 
     @Setup
     public void init() throws Exception {
-        tree = new BinarySearchTree<>();
+        tree = new BSTree<>();
         for (int i = 0; i < size; i++) tree.add(UUID.randomUUID().toString());
     }
 

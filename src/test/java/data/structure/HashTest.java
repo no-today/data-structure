@@ -16,12 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class HashTest {
 
     @Test
-    void hashSet() {
+    void hashset() {
         collection(new HashSet<>());
     }
 
     @Test
-    void test() {
+    void hashmap() {
         map(new HashMap<>());
     }
 

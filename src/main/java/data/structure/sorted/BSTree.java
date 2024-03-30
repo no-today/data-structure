@@ -1,10 +1,11 @@
 package data.structure.sorted;
 
 import data.structure.Collection;
-import data.structure.SortedSet;
+import data.structure.Sorted;
 import data.structure.list.ArrayList;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,18 +17,33 @@ import java.util.function.BiConsumer;
  * @author no-today
  * @date 2018/9/27
  */
-public class BSTree<E extends Comparable<E>> implements SortedSet<E> {
+public class BSTree<E extends Comparable<E>> implements Sorted<E> {
 
-    private Node<E> root;
-    private int size;
+    protected Node<E> root;
+    protected int size;
 
-    static class Node<E extends Comparable<E>> {
+    protected static class Node<E extends Comparable<E>> {
+        /**
+         * “节点高度”是指从该节点到它的最远叶子节点的距离 即所经过的“边”的数量
+         * <p>
+         * 叶子节点的高度为 0
+         * 空节点的高度为 -1
+         */
+        int height;
         Node<E> left, right;
         E element;
 
         public Node(E element) {
             this.element = element;
         }
+
+        public void refreshHeight() {
+            height = Math.max(height(left), height(right)) + 1;
+        }
+    }
+
+    protected static int height(Node<?> node) {
+        return node == null ? -1 : node.height;
     }
 
     @Override
@@ -52,74 +68,72 @@ public class BSTree<E extends Comparable<E>> implements SortedSet<E> {
             node.right = insert(node.right, e);
         }
 
+        node.refreshHeight();
         return node;
     }
 
     @Override
     public boolean remove(E e) {
-        return delete(root, e) != null;
+        int eSize = size;
+        root = delete(root, e);
+        return size < eSize;
     }
 
+    /*
+     * 若有一方为空 用另一方顶替 (3
+     *
+     *       5                5
+     *      / \              / \
+     *     3   6    --->    1   6
+     *    /                /
+     *   1                0
+     *  /
+     * 0
+     *
+     * 若两边都不为空 左侧最大值/右侧最小顶替
+     *
+     *       5                5
+     *      / \              / \
+     *     3   6    --->    2   6
+     *    / \              / \
+     *   1   4            1   4
+     *  / \              /
+     * 0   2            0
+     */
     Node<E> delete(Node<E> node, E e) {
         if (node == null) return null;
 
-        if (node.element.compareTo(e) == 0) {
-            /*
-             * 若有一方为空 用另一方顶替 (3
-             *
-             *       5                5
-             *      / \              / \
-             *     3   6    --->    1   6
-             *    /                /
-             *   1                0
-             *  /
-             * 0
-             *
-             * 若两边都不为空 左侧最大值/右侧最小顶替
-             *
-             *       5                5
-             *      / \              / \
-             *     3   6    --->    2   6
-             *    / \              / \
-             *   1   4            1   4
-             *  / \              /
-             * 0   2            0
-             */
-
-            // 当待删除节点的度为0时，表示该节点是叶节点，可以直接删除。
-            // 当待删除节点的度为1时，将待删除节点替换为其子节点即可。
-            if (node.left == null && node.right == null) {
-                size--;
-                return null;
-            } else if (node.left == null) {
-                size--;
-                return node.right;
-            } else if (node.right == null) {
-                size--;
-                return node.left;
-            }
-
-            // 当待删除节点的度为2时 需要用该节点的左子树最大节点 或 右子树最小节点替代
-            // 也就是说 实际上删除的是 左子树最大节点 / 右子树最小节点
-            E element = min(node.right).element;
-            delete(node.right, element);
-            node.element = element;
-            return node;
-        }
-
         if (node.element.compareTo(e) > 0) {
             node.left = delete(node.left, e);
-            return node;
-        } else {
+        } else if (node.element.compareTo(e) < 0) {
             node.right = delete(node.right, e);
-            return node;
+        } else {
+            // 当待删除节点的度为0时，表示该节点是叶节点，可以直接删除。
+            // 当待删除节点的度为1时，将待删除节点替换为其子节点即可。
+            if (node.left == null || node.right == null) {
+                size--;
+                Node<E> child = node.left != null ? node.left : node.right;
+                if (child == null) return null;
+                else node = child;
+            } else {
+                // 当待删除节点的度为2时 需要用该节点的左子树最大节点 或 右子树最小节点替代
+                // 也就是说 实际上删除的是 左子树最大节点 / 右子树最小节点
+                E rightMin = min(node.right).element;
+                node.right = delete(node.right, rightMin);
+                node.element = rightMin;
+            }
         }
+
+        node.refreshHeight();
+        return node;
     }
 
     @Override
     public void clear() {
         while (!isEmpty()) {
-            removeMax();
+            // 只是想覆盖测试而已
+            if (Math.random() > 0.5) removeMax();
+            else removeMin();
         }
     }
 
@@ -164,7 +178,10 @@ public class BSTree<E extends Comparable<E>> implements SortedSet<E> {
         }
 
         E[] finalArr = arr;
-        foreach((e, i) -> finalArr[i] = e);
+        foreach((e, i) -> {
+            if (i >= finalArr.length) System.out.println("out: " + e + ", arr: " + Arrays.toString(finalArr));
+            finalArr[i] = e;
+        });
         return finalArr;
     }
 
@@ -286,7 +303,7 @@ public class BSTree<E extends Comparable<E>> implements SortedSet<E> {
 
     void range(Node<E> node, E start, E stop, int limit, Collection<E> result) {
         if (limit == -1) limit = Integer.MAX_VALUE;
-        if (node == null ||  result.size() == limit) return;
+        if (node == null || result.size() == limit) return;
 
         // 二分法探到左侧底 再向上收集
         if (node.element.compareTo(start) > 0) {
@@ -301,5 +318,41 @@ public class BSTree<E extends Comparable<E>> implements SortedSet<E> {
         if (Objects.isNull(stop) || node.element.compareTo(stop) < 0) {
             range(node.right, start, stop, limit, result);
         }
+    }
+
+    /**
+     * 平衡因子
+     */
+    protected int balanceFactor(Node<?> node) {
+        if (node == null) return 0;
+        return height(node.left) - height(node.right);
+    }
+
+    public boolean isBalanced() {
+        return isBalanced(root);
+    }
+
+    /**
+     * O(n) 每个节点都会参与运算
+     */
+    boolean isBalanced(Node<E> node) {
+        // 空树是平衡的
+        if (node == null) return true;
+
+        /*
+         *     10{3
+         *    /  \
+         *   5{2  15{0
+         *  / \
+         * 1{0 7{1
+         *    /
+         *   6{0
+         */
+        int balanceFactor = balanceFactor(node);
+        if (Math.abs(balanceFactor) > 1) {
+            return false;
+        }
+
+        return isBalanced(node.left) && isBalanced(node.right);
     }
 }

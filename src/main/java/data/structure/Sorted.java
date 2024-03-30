@@ -1,10 +1,12 @@
 package data.structure;
 
 /**
+ * 时间复杂度为 O(logn)
+ *
  * @author no-today
  * @date 2024/03/27 09:12
  */
-public interface SortedSet<E extends Comparable<E>> extends Collection<E> {
+public interface Sorted<E extends Comparable<E>> extends Collection<E> {
 
     /**
      * 获取集合中的最小元素

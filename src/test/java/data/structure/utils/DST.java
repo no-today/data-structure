@@ -4,10 +4,10 @@ package data.structure.utils;
 import data.structure.Collection;
 import data.structure.Map;
 import data.structure.Set;
-import data.structure.SortedSet;
+import data.structure.Sorted;
+import data.structure.sorted.AVLTree;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,10 +37,13 @@ public class DST {
             }
         }, RESOURCES);
 
-        System.out.printf("Total worlds: %s%n", collection.size());
+        System.out.printf("Total items: %s%n", collection.size());
         assertFalse(collection.isEmpty());
 
-        List.of(collection.toArray(new String[0])).forEach(e -> {
+        String[] array = collection.toArray(new String[0]);
+        assertEquals(array.length, collection.size());
+
+        List.of(array).forEach(e -> {
             assertTrue(collection.remove(e));
             try {
                 assertEquals(collection.size(), counter.decrementAndGet());
@@ -61,46 +64,46 @@ public class DST {
             map.put(e, count);
         }, RESOURCES);
 
-        System.out.printf("Total worlds: %s%n", map.size());
+        System.out.printf("Total items: %s%n", map.size());
         assertFalse(map.isEmpty());
 
-        List.of(map.entryKey().toArray(new String[0])).forEach(e -> {
+        String[] array = map.entryKey().toArray(new String[0]);
+        assertEquals(array.length, map.size());
+
+        List.of(array).forEach(e -> {
             assertNotNull(map.remove(e));
         });
 
         assertTrue(map.isEmpty());
     }
 
-    public static void sortedSet(SortedSet<String> sortedSet) {
-        System.out.printf("Implementation: %s\n", sortedSet.getClass().getSimpleName());
+    public static void sorted(Sorted<String> sorted) {
+        System.out.printf("Implementation: %s\n", sorted.getClass().getSimpleName());
 
-        assertTrue(sortedSet.isEmpty());
+        assertTrue(sorted.isEmpty());
         AtomicInteger counter = new AtomicInteger(0);
         ArticleReader.read(e -> {
-            if (sortedSet.add(e)) {
-                counter.incrementAndGet();
-            }
-            assertTrue(sortedSet.contains(e));
+            if (sorted.add(e)) counter.incrementAndGet();
+            assertTrue(sorted.contains(e));
+            assertEquals(counter.get(), sorted.size());
 
-            assertEquals(counter.get(), sortedSet.size());
         }, RESOURCES);
 
-        System.out.printf("Total worlds: %s%n", sortedSet.size());
-        assertFalse(sortedSet.isEmpty());
+        System.out.printf("Total items: %s%n", sorted.size());
+        assertFalse(sorted.isEmpty());
+        if (sorted instanceof AVLTree) assertTrue(((AVLTree<String>) sorted).isBalanced());
 
-        String[] array = sortedSet.toArray(new String[0]);
+        String[] array = sorted.toArray(new String[0]);
+        assertEquals(array.length, sorted.size());
         assertTrue(isSorted(array));
 
         List.of(array).forEach(e -> {
-            assertTrue(sortedSet.remove(e));
-            try {
-                assertEquals(sortedSet.size(), counter.decrementAndGet());
-            } catch (Throwable ex) {
-                throw new RuntimeException(ex);
-            }
+            assertTrue(sorted.contains(e));
+            assertTrue(sorted.remove(e));
+            assertEquals(counter.decrementAndGet(), sorted.size());
         });
 
-        assertTrue(sortedSet.isEmpty());
+        assertTrue(sorted.isEmpty());
     }
 
     private static <E extends Comparable<E>> boolean isSorted(E[] arr) {

@@ -23,8 +23,6 @@ public class StackTest {
         stack.push("8");
         stack.push("9");
 
-        System.out.println(stack);
-
         assertEquals("9", stack.pop());
         assertEquals("8", stack.pop());
         assertEquals("7", stack.peek());
