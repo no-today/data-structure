@@ -56,7 +56,7 @@ public class Sort {
      */
     public static <T extends Comparable<T>> void insertion(T[] array) {
         for (int i = 1; i < array.length; i++) {
-            T current = array[i];
+            T cur = array[i];
             int j = i - 1;
 
             /*
@@ -65,12 +65,12 @@ public class Sort {
              * 依次将比它大的元素向后移动，腾出它应该插入的位置。
              * 2 3 4 6 5
              */
-            while (j >= 0 && array[j].compareTo(current) > 0) {
+            while (j >= 0 && array[j].compareTo(cur) > 0) {
                 array[j + 1] = array[j];
                 j--;
             }
 
-            array[j + 1] = current;
+            array[j + 1] = cur;
         }
     }
 

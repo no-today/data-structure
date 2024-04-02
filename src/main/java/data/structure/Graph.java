@@ -194,12 +194,12 @@ public interface Graph<E> {
         parents.put(source, null);
 
         while (!queue.isEmpty()) {
-            E current = queue.dequeue();
-            if (current.equals(destination)) {
+            E cur = queue.dequeue();
+            if (cur.equals(destination)) {
                 return buildShortestPath(parents, destination);
             }
 
-            List<E> neighbors = getNeighbors(current);
+            List<E> neighbors = getNeighbors(cur);
             for (int i = 0; i < neighbors.size(); i++) {
                 E neighbor = neighbors.get(i);
                 if (!visited.contains(neighbor)) {
@@ -207,7 +207,7 @@ public interface Graph<E> {
                     queue.add(neighbor);
 
                     // 查找场景为 根据子查找父
-                    parents.put(neighbor, current);
+                    parents.put(neighbor, cur);
                 }
             }
         }
@@ -217,11 +217,11 @@ public interface Graph<E> {
 
     default List<E> buildShortestPath(Map<E, E> parents, E destination) {
         LinkedList<E> paths = new LinkedList<>();
-        E current = destination;
-        while (current != null) {
+        E cur = destination;
+        while (cur != null) {
             // 从目标节点逆向构建路径
-            paths.addFirst(current);
-            current = parents.get(current);
+            paths.addFirst(cur);
+            cur = parents.get(cur);
         }
         return paths;
     }

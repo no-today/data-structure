@@ -1,10 +1,11 @@
 package data.structure.sorted;
 
 import data.structure.Collection;
+import data.structure.List;
+import data.structure.Sorted;
+import data.structure.list.ArrayList;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.BiConsumer;
 
 /**
@@ -15,7 +16,7 @@ import java.util.function.BiConsumer;
  * @author no-today
  * @date 2022/04/30 14:25
  */
-public class SkipList<E extends Comparable<E>> implements Collection<E> {
+public class SkipList<E extends Comparable<E>> implements Sorted<E> {
 
     private static final int DEFAULT_MAX_LEVEL = 16;
 
@@ -133,6 +134,57 @@ public class SkipList<E extends Comparable<E>> implements Collection<E> {
         root = new SkipListNode<>(null, maxLevel);
     }
 
+    @Override
+    public E min() {
+        if (isEmpty()) return null;
+        return root.next[0].element;
+    }
+
+    @Override
+    public E max() {
+        if (isEmpty()) return null;
+
+        SkipListNode<E> cursor = root;
+        int level = root.next.length - 1;
+        while (level >= 0) {
+            while (cursor.next[level] != null) {
+                cursor = cursor.next[level];
+            }
+            // 下落一层
+            level--;
+        }
+
+        return cursor.element;
+    }
+
+    @Override
+    public E removeMin() {
+        E min = min();
+        if (min != null) remove(min);
+        return min;
+    }
+
+    @Override
+    public E removeMax() {
+        E max = max();
+        if (max != null) remove(max);
+        return max;
+    }
+
+    @Override
+    public E higher(E element) {
+        if (isEmpty()) return null;
+
+        return null;
+    }
+
+    @Override
+    public E lower(E element) {
+        if (isEmpty()) return null;
+
+        return null;
+    }
+
     /**
      * 获取范围内的 n 个元素(包含等于)
      *
@@ -141,7 +193,7 @@ public class SkipList<E extends Comparable<E>> implements Collection<E> {
      * @param limit 数量, -1 为不限制
      * @return 范围内的 n 个元素
      */
-    public List<E> range(E start, E stop, int limit) {
+    public Collection<E> range(E start, E stop, int limit) {
         if (limit == -1) limit = Integer.MAX_VALUE;
 
         List<E> array = new ArrayList<>();

@@ -166,18 +166,18 @@ public class BSTree<E extends Comparable<E>> implements Sorted<E> {
         Stack<Node<E>> stack = new ArrayStack<>();
 
         int i = 0;
-        Node<E> current = root;
-        while (current != null || !stack.isEmpty()) {
+        Node<E> cur = root;
+        while (cur != null || !stack.isEmpty()) {
             // 将当前节点及左子树入栈
-            while (current != null) {
-                stack.push(current);
-                current = current.left;
+            while (cur != null) {
+                stack.push(cur);
+                cur = cur.left;
             }
 
-            current = stack.pop();
-            consumer.accept(current.element, i++);
+            cur = stack.pop();
+            consumer.accept(cur.element, i++);
 
-            current = current.right;
+            cur = cur.right;
         }
     }
 

@@ -344,14 +344,14 @@ public class LinkedList<E> implements List<E> {
     public String toString() {
         final StringBuilder sb = new StringBuilder("[");
 
-        Node<E> current = head;
-        while (current != null) {
-            if (current.next == null) {
-                sb.append(current.element.toString());
+        Node<E> cur = head;
+        while (cur != null) {
+            if (cur.next == null) {
+                sb.append(cur.element.toString());
             } else {
-                sb.append(current.element.toString()).append(", ");
+                sb.append(cur.element.toString()).append(", ");
             }
-            current = current.next;
+            cur = cur.next;
         }
 
         sb.append("]");

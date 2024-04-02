@@ -17,7 +17,8 @@ class SortedTest {
 
     @Test
     void skipList() {
-        collection(new SkipList<>());
+        SkipList<String> sorted = new SkipList<>();
+        sorted(sorted);
     }
 
     @Test
