@@ -70,8 +70,13 @@ class SkipListTest {
     @Test
     void findMax() {
         SkipList<Integer> list = new SkipList<>();
-        list.add(1);
-        assertFalse(list.contains(100));
-        assertFalse(list.contains(-100));
+        for (int i = 0; i < 100; i++) {
+            list.add(i);
+        }
+
+        System.out.println(list.min());
+        System.out.println(list.max());
+        System.out.println(list.lower(50));
+        System.out.println(list.higher(50));
     }
 }

@@ -376,4 +376,9 @@ public class BSTree<E extends Comparable<E>> implements Sorted<E> {
 
         return isBalanced(node.left) && isBalanced(node.right);
     }
+
+    public int getHeight() {
+        if (isEmpty()) return 0;
+        return root.height;
+    }
 }

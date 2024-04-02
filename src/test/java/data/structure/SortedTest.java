@@ -5,7 +5,6 @@ import data.structure.sorted.BSTree;
 import data.structure.sorted.SkipList;
 import org.junit.jupiter.api.Test;
 
-import static data.structure.utils.DST.collection;
 import static data.structure.utils.DST.sorted;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,7 +22,7 @@ class SortedTest {
 
     @Test
     void bsTree() {
-        collection(new BSTree<>());
+        sorted(new BSTree<>());
         tree(new BSTree<>());
     }
 

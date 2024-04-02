@@ -6,6 +6,7 @@ import data.structure.Map;
 import data.structure.Set;
 import data.structure.Sorted;
 import data.structure.sorted.AVLTree;
+import data.structure.sorted.BSTree;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -87,7 +88,11 @@ public class DST {
 
         });
 
-        System.out.printf("Total items: %s%n", sorted.size());
+        if (sorted instanceof BSTree) {
+            System.out.printf("Total items: %s, height: %s%n", sorted.size(), ((BSTree<String>) sorted).getHeight());
+        } else {
+            System.out.printf("Total items: %s%n", sorted.size());
+        }
         assertFalse(sorted.isEmpty());
         if (sorted instanceof AVLTree) assertTrue(((AVLTree<String>) sorted).isBalanced());
 
