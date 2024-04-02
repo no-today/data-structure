@@ -2,6 +2,7 @@ package data.structure.sorted;
 
 /**
  * 平衡二叉树
+ * 相比二叉搜索树仅多了添加、删除后的平衡(balance)动作, 这里用继承方式会更清晰
  *
  * @author no-today
  * @date 2024/03/27 09:32

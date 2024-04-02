@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class DST {
 
-    static final String[] RESOURCES = new String[]{"pride-and-prejudice.txt"};
+    private static final int LIMIT = 10000;
 
     public static void collection(Collection<String> collection) {
         System.out.printf("Implementation: %s\n", collection.getClass().getSimpleName());
@@ -26,7 +26,7 @@ public class DST {
 
         assertTrue(collection.isEmpty());
         AtomicInteger counter = new AtomicInteger(0);
-        ArticleReader.read(e -> {
+        ArticleReader.read(LIMIT, e -> {
             if (collection.add(e)) {
                 counter.incrementAndGet();
             }
@@ -35,7 +35,7 @@ public class DST {
             if (!skipCheckSize) {
                 assertEquals(counter.get(), collection.size());
             }
-        }, RESOURCES);
+        });
 
         System.out.printf("Total items: %s%n", collection.size());
         assertFalse(collection.isEmpty());
@@ -59,10 +59,10 @@ public class DST {
         System.out.printf("Implementation: %s\n", map.getClass().getSimpleName());
 
         assertTrue(map.isEmpty());
-        ArticleReader.read(e -> {
+        ArticleReader.read(Integer.MAX_VALUE, e -> {
             Integer count = map.getOrDefault(e, 0) + 1;
             map.put(e, count);
-        }, RESOURCES);
+        });
 
         System.out.printf("Total items: %s%n", map.size());
         assertFalse(map.isEmpty());
@@ -80,12 +80,12 @@ public class DST {
 
         assertTrue(sorted.isEmpty());
         AtomicInteger counter = new AtomicInteger(0);
-        ArticleReader.read(e -> {
+        ArticleReader.read(Integer.MAX_VALUE, e -> {
             if (sorted.add(e)) counter.incrementAndGet();
             assertTrue(sorted.contains(e));
             assertEquals(counter.get(), sorted.size());
 
-        }, RESOURCES);
+        });
 
         System.out.printf("Total items: %s%n", sorted.size());
         assertFalse(sorted.isEmpty());

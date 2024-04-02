@@ -3,6 +3,7 @@ package data.structure.utils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,12 +21,9 @@ public class ArticleReader {
 
     /**
      * 读取信息到容器
-     *
-     * @param consumer
-     * @param resources
-     * @throws Exception
      */
-    public static void read(Consumer<String> consumer, String... resources) {
+    public static void read(Consumer<String> consumer, int limit, String... resources) {
+        AtomicInteger counter = new AtomicInteger();
         for (String resource : resources) {
             try {
                 File file = new File(ArticleReader.class.getClassLoader().getResource("").getPath(), resource);
@@ -33,7 +31,7 @@ public class ArticleReader {
 
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    tokenize(line, consumer);
+                    tokenize(line, consumer, counter, limit);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -41,9 +39,13 @@ public class ArticleReader {
         }
     }
 
-    private static void tokenize(String text, Consumer<String> consumer) {
+    public static void read(int limit, Consumer<String> consumer) {
+        read(consumer, limit, "a-tale-of-two-cities.txt", "pride-and-prejudice.txt");
+    }
+
+    private static void tokenize(String text, Consumer<String> consumer, AtomicInteger counter, int limit) {
         Matcher matcher = WORDS.matcher(text);
-        while (matcher.find()) {
+        while (matcher.find() && counter.getAndIncrement() < limit) {
             consumer.accept(matcher.group());
         }
     }

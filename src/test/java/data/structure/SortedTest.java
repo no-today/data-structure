@@ -22,7 +22,7 @@ class SortedTest {
 
     @Test
     void bsTree() {
-        sorted(new BSTree<>());
+        collection(new BSTree<>());
         tree(new BSTree<>());
     }
 

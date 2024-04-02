@@ -22,12 +22,14 @@ class HashTest {
 
     @Test
     void hashmap() {
-        map(new HashMap<>());
+        HashMap<String, Integer> map = new HashMap<>();
+        map(map);
+        System.out.println("Resize count: " + map.getResizeCount());
     }
 
     @Test
     void testToString() {
-        Map<String, String> map = new HashMap<>();
+        HashMap<String, String> map = new HashMap<>(2);
         map.put("no-today", "no.today@outlook.com");
         map.put("blog", "blog.cathub.me");
 
@@ -38,5 +40,6 @@ class HashTest {
         System.out.println(map);
         System.out.println(map.entrySet());
         System.out.println(map.entryKey());
+        System.out.println("Resize count: " + map.getResizeCount());
     }
 }

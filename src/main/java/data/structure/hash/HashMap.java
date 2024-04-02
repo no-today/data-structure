@@ -33,6 +33,8 @@ public class HashMap<K, V> implements Map<K, V> {
 
     private int size;
 
+    private int resizeCount;
+
     public HashMap(float threshold, int capacity) {
         if (threshold <= 0 || threshold > 1) threshold = DEFAULT_THRESHOLD;
         if (capacity < 0) capacity = DEFAULT_CAPACITY;
@@ -40,8 +42,12 @@ public class HashMap<K, V> implements Map<K, V> {
         this.capacity = capacity;
     }
 
+    public HashMap(int capacity) {
+        this(DEFAULT_THRESHOLD, capacity);
+    }
+
     public HashMap() {
-        this(DEFAULT_THRESHOLD, DEFAULT_CAPACITY);
+        this(DEFAULT_CAPACITY);
     }
 
     /**
@@ -120,6 +126,8 @@ public class HashMap<K, V> implements Map<K, V> {
                 node = node.next;
             }
         }
+
+        resizeCount++;
     }
 
     @Override
@@ -240,6 +248,10 @@ public class HashMap<K, V> implements Map<K, V> {
         StringBuilder sb = new StringBuilder("HashMap{");
         foreach((e, i) -> sb.append(e.toString()).append(", "));
         return sb.replace(sb.length() - 2, sb.length(), "").append("}").toString();
+    }
+
+    public int getResizeCount() {
+        return resizeCount;
     }
 
     public void foreach(BiConsumer<Entry<K, V>, Integer> consumer) {

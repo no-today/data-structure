@@ -2,7 +2,9 @@ package data.structure.sorted;
 
 import data.structure.Collection;
 import data.structure.Sorted;
+import data.structure.Stack;
 import data.structure.list.ArrayList;
+import data.structure.stack.ArrayStack;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -161,11 +163,30 @@ public class BSTree<E extends Comparable<E>> implements Sorted<E> {
 
     @Override
     public void foreach(BiConsumer<E, Integer> consumer) {
-        foreach(root, consumer, new AtomicInteger());
+        Stack<Node<E>> stack = new ArrayStack<>();
+
+        int i = 0;
+        Node<E> current = root;
+        while (current != null || !stack.isEmpty()) {
+            // 将当前节点及左子树入栈
+            while (current != null) {
+                stack.push(current);
+                current = current.left;
+            }
+
+            current = stack.pop();
+            consumer.accept(current.element, i++);
+
+            current = current.right;
+        }
     }
 
+    /**
+     * 递归数据量大会爆栈
+     */
     void foreach(Node<E> node, BiConsumer<E, Integer> consumer, AtomicInteger index) {
         if (node == null) return;
+
         if (node.left != null) foreach(node.left, consumer, index);
         consumer.accept(node.element, index.getAndIncrement());
         if (node.right != null) foreach(node.right, consumer, index);
