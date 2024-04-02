@@ -4,8 +4,6 @@ import data.structure.Graph;
 import data.structure.List;
 import data.structure.list.ArrayList;
 
-import java.util.function.Consumer;
-
 /**
  * 基于邻接矩阵实现的无向图
  * <p>
@@ -34,6 +32,8 @@ public class GraphAdjMat<E> implements Graph<E> {
 
     @Override
     public void addVertex(E vertex) {
+        if (vertices.contains(vertex)) return;
+
         int n = size();
 
         // 添加顶点
@@ -52,8 +52,7 @@ public class GraphAdjMat<E> implements Graph<E> {
     public void addEdge(E source, E destination) {
         int sIndex = vertices.indexOf(source);
         int dIndex = vertices.indexOf(destination);
-        if (sIndex == dIndex || sIndex == -1 || dIndex == -1)
-            throw new IllegalArgumentException("Source and destination must be in the vertex list, and can't point to self");
+        if (sIndex == dIndex || sIndex == -1 || dIndex == -1) throw VERTEX_NOT_EXISTS;
 
         adjMat.get(sIndex).set(dIndex, 1);
         adjMat.get(dIndex).set(sIndex, 1);
@@ -62,7 +61,7 @@ public class GraphAdjMat<E> implements Graph<E> {
     @Override
     public void removeVertex(E vertex) {
         int index = vertices.indexOf(vertex);
-        if (index == -1) throw new IllegalArgumentException("Element does not exist");
+        if (index == -1) throw VERTEX_NOT_EXISTS;
 
         vertices.remove(index);
         adjMat.remove(index);
@@ -76,7 +75,7 @@ public class GraphAdjMat<E> implements Graph<E> {
         int sIndex = vertices.indexOf(source);
         int dIndex = vertices.indexOf(destination);
         if (sIndex == -1 || dIndex == -1)
-            throw new IllegalArgumentException("Source and destination must be in the vertex list");
+            throw VERTEX_NOT_EXISTS;
 
         adjMat.get(sIndex).set(dIndex, 0);
         adjMat.get(dIndex).set(sIndex, 0);
@@ -91,8 +90,7 @@ public class GraphAdjMat<E> implements Graph<E> {
     public boolean containsEdge(E source, E destination) {
         int sIndex = vertices.indexOf(source);
         int dIndex = vertices.indexOf(destination);
-        if (sIndex == -1 || dIndex == -1)
-            throw new IllegalArgumentException("Source and destination must be in the vertex list");
+        if (sIndex == -1 || dIndex == -1) throw VERTEX_NOT_EXISTS;
 
         return adjMat.get(sIndex).get(dIndex) != 0;
     }
@@ -112,7 +110,7 @@ public class GraphAdjMat<E> implements Graph<E> {
     @Override
     public int getDegree(E vertex) {
         int index = vertices.indexOf(vertex);
-        if (index == -1) throw new IllegalArgumentException("Element does not exist");
+        if (index == -1) throw VERTEX_NOT_EXISTS;
 
         int count = 0;
         List<Integer> refs = adjMat.get(index);
@@ -123,28 +121,13 @@ public class GraphAdjMat<E> implements Graph<E> {
     }
 
     @Override
-    public void depthFirstForeach(E startVertex, Consumer<E> consumer) {
-
-    }
-
-    @Override
-    public void breadthFirstForeach(E startVertex, Consumer<E> consumer) {
-
-    }
-
-    @Override
-    public boolean hasPath(E source, E destination) {
-        return false;
-    }
-
-    @Override
     public int size() {
         return vertices.size();
     }
 
     @Override
     public void print() {
-        System.out.println("Vertices:");
+        System.out.println("Vertices with index:");
         System.out.print("Ves\t");
         for (int i = 0; i < vertices.size(); i++) {
             System.out.print(vertices.get(i));
@@ -170,27 +153,5 @@ public class GraphAdjMat<E> implements Graph<E> {
             }
             System.out.println();
         }
-    }
-
-    public static void main(String[] args) {
-        GraphAdjMat<Integer> graph = new GraphAdjMat<>();
-        graph.addVertex(1);
-        graph.addVertex(2);
-        graph.addVertex(3);
-        graph.addVertex(4);
-        graph.addVertex(5);
-        graph.print();
-
-        graph.addEdge(1, 5);
-        graph.addEdge(2, 5);
-        graph.print();
-
-        System.out.println(graph.containsEdge(1, 5));
-        System.out.println(graph.containsEdge(1, 2));
-        System.out.println(graph.getDegree(1));
-        System.out.println(graph.getNeighbors(1));
-
-        graph.removeVertex(1);
-        graph.print();
     }
 }

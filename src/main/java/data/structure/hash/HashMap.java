@@ -1,7 +1,10 @@
 package data.structure.hash;
 
+import data.structure.Collection;
+import data.structure.List;
 import data.structure.Map;
 import data.structure.Set;
+import data.structure.list.ArrayList;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -223,6 +226,13 @@ public class HashMap<K, V> implements Map<K, V> {
         foreach((e, i) -> set.add(e.getKey()));
 
         return set;
+    }
+
+    @Override
+    public Collection<V> values() {
+        List<V> values = new ArrayList<>(size);
+        foreach((e, i) -> values.add(e.getValue()));
+        return values;
     }
 
     @Override

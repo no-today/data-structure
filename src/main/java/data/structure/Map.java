@@ -77,6 +77,8 @@ public interface Map<K, V> {
 
     Set<K> entryKey();
 
+    Collection<V> values();
+
     /**
      * Key-value pair
      *
