@@ -35,13 +35,13 @@ public class GraphTest {
                 assertTrue(graph.hasPath(i, j));
             }
         }
-        
+
         assertTrue(graph.containsEdge(1, 3));
         assertFalse(graph.containsEdge(1, 2));
         assertEquals(2, graph.getDegree(1));
         assertEquals(2, graph.getDegree(10));
 
-        assertArrayContains(graph.getNeighbors(10), 5, 8);
+        assertArraySame(graph.getNeighbors(10), 5, 8);
         assertArrayEquals(new Integer[]{1, 5, 10}, graph.shortestPath(1, 10).toArray(new Integer[0]));
 
         graph.removeEdge(1, 5);
@@ -58,7 +58,7 @@ public class GraphTest {
     }
 
     @SafeVarargs
-    private static <E> void assertArrayContains(List<E> container, E... expected) {
+    private static <E> void assertArraySame(List<E> container, E... expected) {
         assertEquals(container.size(), expected.length);
         for (E i : expected) assertTrue(container.contains(i));
     }
