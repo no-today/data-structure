@@ -145,8 +145,8 @@ public class BSTree<E extends Comparable<E>> implements Sorted<E> {
     }
 
     @Override
-    public boolean contains(Object e) {
-        return findNode(root, (E) e) != null;
+    public boolean contains(E e) {
+        return findNode(root, e) != null;
     }
 
     Node<E> findNode(Node<E> node, E e) {

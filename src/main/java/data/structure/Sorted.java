@@ -8,6 +8,17 @@ package data.structure;
  */
 public interface Sorted<E extends Comparable<E>> extends Collection<E> {
 
+    @Override
+    default boolean contains(Object e) {
+        try {
+            return contains((E) e);
+        } catch (ClassCastException ex) {
+            return false;
+        }
+    }
+
+    boolean contains(E e);
+
     /**
      * 获取集合中的最小元素
      */

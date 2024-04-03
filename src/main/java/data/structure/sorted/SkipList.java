@@ -12,6 +12,9 @@ import java.util.function.BiConsumer;
  * 跳跃列表
  * <p>
  * 参考 Redis 实现
+ * <p>
+ * 跳表是一种多层级的有序列表结构，每个节点具有多个指向下一个节点的引用。通过多级索引，跳表能够在每一层上跳过部分元素，
+ * 使得搜索、插入和删除操作的平均时间复杂度为 O(log n)。
  *
  * @author no-today
  * @date 2022/04/30 14:25
@@ -25,6 +28,9 @@ public class SkipList<E extends Comparable<E>> implements Sorted<E> {
      */
     private static final double DEFAULT_P_FACTOR = 0.5;
 
+    /**
+     * 最大缓存层 该参数直接影响跳表的性能和空间占用
+     */
     private final int maxLevel;
     private final double pFactor;
 
@@ -60,21 +66,21 @@ public class SkipList<E extends Comparable<E>> implements Sorted<E> {
      */
     public boolean add(E element) {
         // 随机索引 N 层
-        int level = randomIndexLevel();
+        int cacheLevel = randomIndexLevel();
         // refresh currentLevel
-        currentLevel = Math.max(currentLevel, level);
+        currentLevel = Math.max(currentLevel, cacheLevel);
 
         // 从上往下查找插入的位置
-        SkipListNode<E> newNode = new SkipListNode<>(element, level);
+        SkipListNode<E> newNode = new SkipListNode<>(element, cacheLevel);
         SkipListNode<E> cur = root;
-        for (int i = currentLevel - 1; i >= 0; i--) {
-            cur = findInsertPosition(cur, i, element);
+        for (int level = currentLevel - 1; level >= 0; level--) {
+            cur = findInsertPositionInCurrentLayer(cur, level, element);
 
             // 从上往下找是为了搜索效率, 但并不是每一层都需要插入, 只需要添加到底部的 level 层
-            if (i < level) {
+            if (level < cacheLevel) {
                 // 添加新元素
-                newNode.next[i] = cur.next[i];
-                cur.next[i] = newNode;
+                newNode.next[level] = cur.next[level];
+                cur.next[level] = newNode;
             }
 
             // 添加完当前层之后下降一层, 从当前位置开始查找该层的插入位置, 无需从该层的 ROOT 节点开始找
@@ -84,13 +90,14 @@ public class SkipList<E extends Comparable<E>> implements Sorted<E> {
         return true;
     }
 
+    @Override
     public boolean contains(E element) {
         SkipListNode<E> cur = root;
-        for (int i = currentLevel - 1; i >= 0; i--) {
-            cur = findInsertPosition(cur, i, element);
+        for (int level = currentLevel - 1; level >= 0; level--) {
+            cur = findInsertPositionInCurrentLayer(cur, level, element);
 
             // 如果找的目标比所有的的大, 那么 cur 已经是链表尾部了(指向空)
-            if (cur.next[i] != null && cur.next[i].element.compareTo(element) == 0) {
+            if (cur.next[level] != null && cur.next[level].element.compareTo(element) == 0) {
                 return true;
             }
 
@@ -105,22 +112,22 @@ public class SkipList<E extends Comparable<E>> implements Sorted<E> {
     public boolean remove(E element) {
         boolean deleted = false;
         SkipListNode<E> cur = root;
-        for (int i = currentLevel - 1; i >= 0; i--) {
-            cur = findInsertPosition(cur, i, element);
+        for (int level = currentLevel - 1; level >= 0; level--) {
+            cur = findInsertPositionInCurrentLayer(cur, level, element);
 
-            if (cur.next[i] != null && cur.next[i].element.compareTo(element) == 0) {
-                SkipListNode<E> removeNode = cur.next[i];
-                cur.next[i] = removeNode.next[i];
-                removeNode.next[i] = null;
+            if (cur.next[level] != null && cur.next[level].element.compareTo(element) == 0) {
+                SkipListNode<E> removeNode = cur.next[level];
+                cur.next[level] = removeNode.next[level];
+                removeNode.next[level] = null;
 
                 // 每个元素只需要计数一次
-                if (i == 0) {
+                if (level == 0) {
                     deleted = true;
                     length--;
                 }
 
                 // 只删除第一个匹配的而不是全部
-                // i++;
+                // level++;
             }
         }
 
@@ -171,18 +178,51 @@ public class SkipList<E extends Comparable<E>> implements Sorted<E> {
         return max;
     }
 
+    /*
+     * 1       5
+     * 1   3   5
+     * 1 2 3 4 5
+     *
+     * higher 3 -> 4
+     */
     @Override
     public E higher(E element) {
         if (isEmpty()) return null;
 
+        // 从顶层开始向下查找, 一定要查到最底层
+        SkipListNode<E> cur = root;
+        for (int level = currentLevel - 1; level >= 0; level--) {
+            while (cur.next[level] != null && cur.next[level].element.compareTo(element) <= 0) {
+                cur = cur.next[level];
+            }
+        }
+
+        if (cur.next[0] != null) {
+            return cur.next[0].element;
+        }
+
         return null;
     }
 
+    /*
+     * 1       5
+     * 1   3   5
+     * 1 2 3 4 5
+     *
+     * lower 3 -> 2
+     */
     @Override
     public E lower(E element) {
         if (isEmpty()) return null;
 
-        return null;
+        // 从顶层开始向下查找, 一定要查到最底层
+        SkipListNode<E> cur = root;
+        for (int level = currentLevel - 1; level >= 0; level--) {
+            cur = findInsertPositionInCurrentLayer(cur, level, element);
+        }
+
+        // 如果没有比目标元素更小的，cur 为 ROOT，element 是空
+        return cur.element;
     }
 
     /**
@@ -199,8 +239,8 @@ public class SkipList<E extends Comparable<E>> implements Sorted<E> {
         List<E> array = new ArrayList<>();
 
         SkipListNode<E> cur = root;
-        for (int i = currentLevel - 1; i >= 0; i--) {
-            cur = findInsertPosition(cur, i, start);
+        for (int level = currentLevel - 1; level >= 0; level--) {
+            cur = findInsertPositionInCurrentLayer(cur, level, start);
 
             // not found
             if (cur.isRoot()) {
@@ -218,7 +258,7 @@ public class SkipList<E extends Comparable<E>> implements Sorted<E> {
         int count = 0;
         while (cur != null && count < limit) {
             // 大于停止值, 不需要再继续收集了
-            if (stop != null && cur.element.compareTo(stop) > 0) {
+            if (stop != null && cur.element.compareTo(stop) >= 0) {
                 break;
             }
 
@@ -235,11 +275,6 @@ public class SkipList<E extends Comparable<E>> implements Sorted<E> {
 
     public int size() {
         return length;
-    }
-
-    @Override
-    public boolean contains(Object e) {
-        return contains((E) e);
     }
 
     @Override
@@ -284,15 +319,13 @@ public class SkipList<E extends Comparable<E>> implements Sorted<E> {
     }
 
     /**
-     * 寻找插入位置: 插入在返回节点的右侧(返回的结果必定比目标节点小)
+     * 在当前层寻找插入位置: 插入在返回节点的右侧(返回的结果必定比目标节点小)
      * <p>
      * 我的右节点比 目标元素 大, 说明 目标 应该位于 我 和 我的右节点 的 中间
      * <p>
      * 返回的节点可能与 element 所处节点的值相同, 因为右节点必定是 大于的
      */
-    private SkipListNode<E> findInsertPosition(SkipListNode<E> node, int level, E element) {
-        // 如需降序: 右节点小于等于 目标 时中断
-
+    private SkipListNode<E> findInsertPositionInCurrentLayer(SkipListNode<E> node, int level, E element) {
         // 没有 next(右) 时停止
         // 右节点大于等于 目标 时中断, 返回当前节点
         while (node.next[level] != null && node.next[level].element.compareTo(element) < 0) {
@@ -312,31 +345,27 @@ public class SkipList<E extends Comparable<E>> implements Sorted<E> {
         return level;
     }
 
+    public int getLevel() {
+        return currentLevel;
+    }
+
+    /**
+     * ___
+     * |  |                                          ->                                     | NIL |
+     * |  | -> | 0 |                                 ->                                     | NIL |
+     * |  | -> | 0 |           ->        | 50 |                     ->                      | NIL |
+     * |  | -> | 0 |           ->        | 50 |      ->      | 75 |           ->            | NIL |
+     * |__| -> | 0 | -> | 25 | -> | 40 | | 50 | -> | 60 | -> | 75 | -> | 80 | -> | 100 | -> | NIL |
+     * <p>
+     * ROOT 节点是特殊的，它需要能从所有缓存层开始访问 next，所以持有所有层级的 next。
+     * 其他节点在新增的时候会随机缓存 N 层(1 <= N < maxLevel)
+     * <p>
+     * 访问当前层的下一个节点: node.next[node.next.length - 1]
+     * 从当前节点的视角来看，可以看到下一个节点全部层级，但是看不到自己的下层。
+     */
     private static class SkipListNode<E> {
 
         private final E element;
-
-        /**
-         * N 层都有不同的 next 节点
-         * 第 1 层有全部的元素,
-         * 第 N 层预期有 N-1 层 1/2 的元素(可以通过 DEFAULT_P_FACTOR 参数控制索引稀疏)
-         * <p>
-         * 首先初始化的 ROOT Node 有 MAX_LEVEL 个 next
-         * 后续添加的节点将有随机 1 ~ MAX_LEVEL 个 next
-         * <p>
-         * ___
-         * |  |                                           ->                                    | NIL |
-         * |  | -> | 30 |                                 ->                                    | NIL |
-         * |  | -> | 30 |           ->        | 50 |                     ->                     | NIL |
-         * |  | -> | 30 |           ->        | 50 |      ->      | 70 | -> | 80 |      ->      | NIL |
-         * |__| -> | 30 | -> | 40 | -> | 45 | | 50 | -> | 60 | -> | 70 | -> | 80 | -> | 90 | -> | NIL |
-         * <p>
-         * 可以把该属性看作是一列
-         * 第一列是 ROOT 节点, 创建跳表时立刻初始化, 它有点特殊, 实际不存储值, 例子中的 ROOT 节点有 5 个 Next 节点
-         * 30 节点有 4 个 Next 节点, 以此类推...
-         * <p>
-         * 这样关联起来之后, 任意节点都可以知道自己 N层 的 right、down 是哪个节点
-         */
         private final SkipListNode<E>[] next;
 
         public SkipListNode(E element, int level) {
@@ -350,10 +379,7 @@ public class SkipList<E extends Comparable<E>> implements Sorted<E> {
 
         @Override
         public String toString() {
-            String sb = "{" + "score=" + element +
-                    ", levels=" + next.length +
-                    '}';
-            return sb;
+            return "{" + "score=" + element + ", levels=" + next.length + '}';
         }
     }
 }
