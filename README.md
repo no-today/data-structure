@@ -1,20 +1,22 @@
-## 数据结构练习
+## Data Structures
 
-### [List](src/main/java/data/structure/List.java)
+- [x] [List](src/test/java/data/structure/ListTest.java)
+- [x] [Queue](src/test/java/data/structure/QueueTest.java)
+- [x] [Stack](src/test/java/data/structure/StackTest.java)
+- [x] [Hash](src/test/java/data/structure/HashTest.java)
+- [x] [Graph](src/test/java/data/structure/GraphTest.java)
+- [x] [Sorted](src/test/java/data/structure/SortedTest.java)
 
-- [ArrayList](src/main/java/data/structure/list/ArrayList.java)
-- [LinkedList](src/main/java/data/structure/list/LinkedList.java)
+## Algorithms
 
-### [Stack](src/main/java/data/structure/Stack.java)
+- [ ] Search
+- [ ] Sort
+- [ ] Divide and conquer
+- [ ] Backtrace
+- [ ] Dynamic programming
+- [ ] Greedy
 
-- [ArrayStack](src/main/java/data/structure/stack/ArrayStack.java)
+## References
 
-### [Queue](src/main/java/data/structure/Queue.java)
-
-- [ArrayQueue](src/main/java/data/structure/queue/ArrayQueue.java)
-- [LinkedQueue](src/main/java/data/structure/queue/LinkedQueue.java)
-- [PriorityQueue](src/main/java/data/structure/queue/PriorityQueue.java)
-
-### Tree
-
-- [BinarySearchTree](src/main/java/data/structure/tree/BinarySearchTree.java)
+- [Hello 算法](https://www.hello-algo.com/) | [github](https://github.com/krahets/hello-algo)
+- [数据结构可视化](https://www.cs.usfca.edu/~galles/visualization/Algorithms.html)
