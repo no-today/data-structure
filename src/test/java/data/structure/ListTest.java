@@ -11,9 +11,7 @@ public class ListTest {
 
     @Test
     public void array() {
-        ArrayList<String> list = new ArrayList<>();
-        collection(list);
-        System.out.println("Resize count: " + list.getResizeCount());
+        collection(new ArrayList<>());
     }
 
     @Test

@@ -5,6 +5,8 @@ import data.structure.Collection;
 import data.structure.Map;
 import data.structure.Set;
 import data.structure.Sorted;
+import data.structure.hash.HashMap;
+import data.structure.list.ArrayList;
 import data.structure.sorted.AVLTree;
 import data.structure.sorted.BSTree;
 import data.structure.sorted.SkipList;
@@ -39,7 +41,11 @@ public class DST {
             }
         });
 
-        System.out.printf("Total items: %s%n", collection.size());
+        if (collection instanceof ArrayList) {
+            System.out.printf("Total items: %s, Resizes: %s\n", collection.size(), ((ArrayList<String>) collection).getResizeCount());
+        } else {
+            System.out.printf("Total items: %s%n", collection.size());
+        }
         assertFalse(collection.isEmpty());
 
         String[] array = collection.toArray(new String[0]);
@@ -66,7 +72,11 @@ public class DST {
             map.put(e, count);
         });
 
-        System.out.printf("Total items: %s%n", map.size());
+        if (map instanceof HashMap) {
+            System.out.printf("Total items: %s, Resizes: %s\n", map.size(), ((HashMap<String, Integer>) map).getResizeCount());
+        } else {
+            System.out.printf("Total items: %s%n", map.size());
+        }
         assertFalse(map.isEmpty());
 
         String[] array = map.entryKey().toArray(new String[0]);

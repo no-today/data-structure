@@ -22,9 +22,7 @@ class HashTest {
 
     @Test
     void hashmap() {
-        HashMap<String, Integer> map = new HashMap<>();
-        map(map);
-        System.out.println("Resize count: " + map.getResizeCount());
+        map(new HashMap<>());
     }
 
     @Test

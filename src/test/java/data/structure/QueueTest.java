@@ -39,7 +39,7 @@ class QueueTest {
         LinkedDeque<String> linkedDeque = new LinkedDeque<>();
 
         // 记录操作轨迹，逆向操作数据应当一致
-        ArrayList<Pair<Boolean, String>> records = new ArrayList<>(size);
+        List<Pair<Boolean, String>> records = new ArrayList<>(size);
 
         for (int i = 0; i < size; i++) {
             String e = String.valueOf(i);
