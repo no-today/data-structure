@@ -4,27 +4,30 @@ package data.structure;
 import data.structure.stack.ArrayStack;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StackTest {
 
-    ArrayStack<String> stack = new ArrayStack<>();
-
     @Test
-    public void test() throws Exception {
-        stack.push("0");
-        stack.push("1");
-        stack.push("2");
-        stack.push("3");
-        stack.push("4");
-        stack.push("5");
-        stack.push("6");
-        stack.push("7");
-        stack.push("8");
-        stack.push("9");
+    public void arrayStack() {
+        int size = 10000;
 
-        assertEquals("9", stack.pop());
-        assertEquals("8", stack.pop());
-        assertEquals("7", stack.peek());
+        Stack<Integer> stack = new ArrayStack<>();
+        assertTrue(stack.isEmpty());
+
+        for (int i = 0; i < size; i++) {
+            stack.push(i);
+            assertEquals(i, stack.peek());
+        }
+
+        assertFalse(stack.isEmpty());
+        assertEquals(size, stack.size());
+
+        for (int i = size - 1; i >= 0; i--) {
+            assertEquals(i, stack.peek());
+            assertEquals(i, stack.pop());
+        }
+
+        assertTrue(stack.isEmpty());
     }
 }

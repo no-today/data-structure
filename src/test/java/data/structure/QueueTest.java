@@ -30,13 +30,13 @@ class QueueTest {
 
     @Test
     void linkedDeque() {
-        collection(new LinkedDeque<>());
+        Deque<String> linkedDeque = new LinkedDeque<>();
+        collection(linkedDeque);
+        dequeTesting(linkedDeque);
     }
 
-    @Test
-    void linkedDeque1() {
+    private static void dequeTesting(Deque<String> linkedDeque) {
         int size = 10000;
-        LinkedDeque<String> linkedDeque = new LinkedDeque<>();
 
         // 记录操作轨迹，逆向操作数据应当一致
         List<Pair<Boolean, String>> records = new ArrayList<>(size);
