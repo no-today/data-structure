@@ -31,7 +31,7 @@ public interface Map<K, V> {
      */
     V get(Object key);
 
-    V getOrDefault(Object key, V val);
+    V getOrDefault(Object key, V defaultValue);
 
     /**
      * Existence key

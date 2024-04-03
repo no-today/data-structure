@@ -7,7 +7,6 @@ import data.structure.Set;
 import data.structure.list.ArrayList;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 
 /**
@@ -101,7 +100,9 @@ public class HashMap<K, V> implements Map<K, V> {
     }
 
     V getVal(int hash, Object key) {
-        return Optional.ofNullable(findNode(hash, key)).map(e -> e.val).orElse(null);
+        Node<K, V> node = findNode(hash, key);
+        if (node == null) return null;
+        return node.val;
     }
 
     /**
@@ -146,7 +147,9 @@ public class HashMap<K, V> implements Map<K, V> {
 
     @Override
     public V remove(K key) {
-        return Optional.ofNullable(removeNode(key)).map(Entry::getValue).orElse(null);
+        Entry<K, V> kvEntry = removeNode(key);
+        if (kvEntry == null) return null;
+        return kvEntry.getValue();
     }
 
     Entry<K, V> removeNode(K key) {
@@ -180,8 +183,9 @@ public class HashMap<K, V> implements Map<K, V> {
     }
 
     @Override
-    public V getOrDefault(Object key, V val) {
-        return Optional.ofNullable(get(key)).orElse(val);
+    public V getOrDefault(Object key, V defaultValue) {
+        V v = get(key);
+        return v == null ? defaultValue : v;
     }
 
     @Override

@@ -9,9 +9,8 @@ import data.structure.stack.ArrayStack;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * 二分搜索树
@@ -120,7 +119,7 @@ public class BSTree<E extends Comparable<E>> implements Sorted<E> {
             } else {
                 // 当待删除节点的度为2时 需要用该节点的左子树最大节点 或 右子树最小节点替代
                 // 也就是说 实际上删除的是 左子树最大节点 / 右子树最小节点
-                E rightMin = min(node.right).element;
+                E rightMin = findMinNode(node.right).element;
                 node.right = delete(node.right, rightMin);
                 node.element = rightMin;
             }
@@ -184,12 +183,12 @@ public class BSTree<E extends Comparable<E>> implements Sorted<E> {
     /**
      * 递归数据量大会爆栈
      */
-    void foreach(Node<E> node, BiConsumer<E, Integer> consumer, AtomicInteger index) {
+    void foreach(Node<E> node, Consumer<E> consumer) {
         if (node == null) return;
 
-        if (node.left != null) foreach(node.left, consumer, index);
-        consumer.accept(node.element, index.getAndIncrement());
-        if (node.right != null) foreach(node.right, consumer, index);
+        foreach(node.left, consumer);
+        consumer.accept(node.element);
+        foreach(node.right, consumer);
     }
 
     @Override
@@ -208,12 +207,12 @@ public class BSTree<E extends Comparable<E>> implements Sorted<E> {
 
     @Override
     public E min() {
-        return Optional.ofNullable(min(root))
-                .map(e -> e.element)
-                .orElse(null);
+        Node<E> minNode = findMinNode(root);
+        if (minNode == null) return null;
+        return minNode.element;
     }
 
-    Node<E> min(Node<E> node) {
+    Node<E> findMinNode(Node<E> node) {
         if (node == null) return null;
         while (node.left != null) node = node.left;
         return node;
@@ -221,22 +220,26 @@ public class BSTree<E extends Comparable<E>> implements Sorted<E> {
 
     @Override
     public E max() {
-        return Optional.ofNullable(max(root))
-                .map(e -> e.element)
-                .orElse(null);
+        Node<E> maxNode = findMaxNode(root);
+        if (maxNode == null) return null;
+        return maxNode.element;
     }
 
     @Override
     public E removeMin() {
-        return Optional.ofNullable(delete(root, min())).map(e -> e.element).orElse(null);
+        Node<E> node = delete(root, min());
+        if (node == null) return null;
+        return node.element;
     }
 
     @Override
     public E removeMax() {
-        return Optional.ofNullable(delete(root, max())).map(e -> e.element).orElse(null);
+        Node<E> node = delete(root, max());
+        if (node == null) return null;
+        return node.element;
     }
 
-    Node<E> max(Node<E> node) {
+    Node<E> findMaxNode(Node<E> node) {
         if (node == null) return null;
         while (node.right != null) node = node.right;
         return node;
