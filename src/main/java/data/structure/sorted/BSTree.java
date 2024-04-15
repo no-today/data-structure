@@ -7,7 +7,6 @@ import data.structure.list.ArrayList;
 import data.structure.stack.ArrayStack;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -22,30 +21,6 @@ public class BSTree<E extends Comparable<E>> implements Sorted<E> {
 
     protected Node<E> root;
     protected int size;
-
-    protected static class Node<E extends Comparable<E>> {
-        /**
-         * “节点高度”是指从该节点到它的最远叶子节点的距离 即所经过的“边”的数量
-         * <p>
-         * 叶子节点的高度为 0
-         * 空节点的高度为 -1
-         */
-        int height;
-        Node<E> left, right;
-        E element;
-
-        public Node(E element) {
-            this.element = element;
-        }
-
-        public void refreshHeight() {
-            height = Math.max(height(left), height(right)) + 1;
-        }
-    }
-
-    protected static int height(Node<?> node) {
-        return node == null ? -1 : node.height;
-    }
 
     @Override
     public boolean add(E e) {
@@ -167,15 +142,17 @@ public class BSTree<E extends Comparable<E>> implements Sorted<E> {
         int i = 0;
         Node<E> cur = root;
         while (cur != null || !stack.isEmpty()) {
-            // 将当前节点及左子树入栈
+            // 从当前节点一路压栈到最左侧节点
             while (cur != null) {
                 stack.push(cur);
                 cur = cur.left;
             }
 
+            // 从最左侧节点开始出栈, 逐个按左 中 右顺序消费
             cur = stack.pop();
             consumer.accept(cur.element, i++);
 
+            // 向上回溯一层 再处理右侧
             cur = cur.right;
         }
     }
@@ -198,10 +175,7 @@ public class BSTree<E extends Comparable<E>> implements Sorted<E> {
         }
 
         E[] finalArr = arr;
-        foreach((e, i) -> {
-            if (i >= finalArr.length) System.out.println("out: " + e + ", arr: " + Arrays.toString(finalArr));
-            finalArr[i] = e;
-        });
+        foreach((e, i) -> finalArr[i] = e);
         return finalArr;
     }
 
@@ -225,20 +199,6 @@ public class BSTree<E extends Comparable<E>> implements Sorted<E> {
         return maxNode.element;
     }
 
-    @Override
-    public E removeMin() {
-        Node<E> node = delete(root, min());
-        if (node == null) return null;
-        return node.element;
-    }
-
-    @Override
-    public E removeMax() {
-        Node<E> node = delete(root, max());
-        if (node == null) return null;
-        return node.element;
-    }
-
     Node<E> findMaxNode(Node<E> node) {
         if (node == null) return null;
         while (node.right != null) node = node.right;
@@ -246,13 +206,55 @@ public class BSTree<E extends Comparable<E>> implements Sorted<E> {
     }
 
     @Override
+    public E removeMin() {
+        E[] result = (E[]) new Comparable[]{null};
+        root = deleteMin(root, result);
+        return result[0];
+    }
+
+    Node<E> deleteMin(Node<E> node, E[] result) {
+        // 删除最小节点, 直接用最小节点的右节点顶替
+        if (node.left == null) {
+            size--;
+            result[0] = node.element;
+            return node.right;
+        }
+
+        node.left = deleteMin(node.left, result);
+
+        node.refreshHeight();
+        return node;
+    }
+
+    @Override
+    public E removeMax() {
+        E[] result = (E[]) new Comparable[]{null};
+        root = deleteMax(root, result);
+        return result[0];
+    }
+
+    Node<E> deleteMax(Node<E> node, E[] result) {
+        if (node.right == null) {
+            size--;
+            result[0] = node.element;
+            return node.left;
+        }
+
+        node.right = deleteMax(node.right, result);
+
+        node.refreshHeight();
+        return node;
+    }
+
+    @Override
     public E higher(E element) {
-        if (root == null) return null;
         return findGreaterThan(root, element, null);
     }
 
     /**
      * 从 当前节点 往下寻找比 目标节点 大的最小元素
+     * <p>
+     * 相当于给不存在的元素找后继节点
      *
      * @param node    当前节点
      * @param element 目标节点
@@ -274,7 +276,7 @@ public class BSTree<E extends Comparable<E>> implements Sorted<E> {
 
         // 当前节点大于目标节点
         if (node.element.compareTo(element) > 0) {
-            // 记录当前大于目标节点的值, 但这还不算完, 需要继续向左子树搜索最小值
+            // 记录当前大于目标节点的值, 但这还不算完, 需要继续收窄范围找到(最接近目标元素的)后继节点
             result = node.element;
             return findGreaterThan(node.left, element, result);
         } else {
@@ -289,57 +291,52 @@ public class BSTree<E extends Comparable<E>> implements Sorted<E> {
 
     /**
      * 从 当前节点 往下寻找比 目标节点 小的最大元素
+     * <p>
+     * 相当于给不存在的元素找前驱节点
      *
      * @param node    当前节点
      * @param element 目标节点
      * @param result  当前比目标节点小的最大节点
      */
     E findLessThan(Node<E> node, E element, E result) {
-        /*
-         * node = 10, element = 5, result = 10,7,6
-         *
-         *       10
-         *      /  \
-         *     5    15
-         *    / \
-         *   1   7
-         *      /
-         *     6
-         */
         if (node == null) return result;
 
         // 当前节点大于目标节点
-        if (node.element.compareTo(element) >= 0) {
-            return findLessThan(node.left, element, result);
-        } else {
-            // 记录当前小于目标节点的值, 但这还不算完, 需要继续向右子树搜索最大值
+        if (node.element.compareTo(element) < 0) {
+            // 记录当前小于目标节点的值, 但这还不算完, 需要继续收窄范围找到(最接近目标元素的)前驱节点
             result = node.element;
             return findLessThan(node.right, element, result);
+        } else {
+            return findLessThan(node.left, element, result);
         }
     }
 
     @Override
     public Collection<E> range(E start, E stop, int limit) {
-        Collection<E> result = new ArrayList<>(limit);
+        if (limit == -1) limit = 2000;
+
+        Collection<E> result = new ArrayList<>();
         range(root, start, stop, limit, result);
         return result;
     }
 
     void range(Node<E> node, E start, E stop, int limit, Collection<E> result) {
-        if (limit == -1) limit = Integer.MAX_VALUE;
         if (node == null || result.size() == limit) return;
+        boolean nonstop = Objects.isNull(stop);
 
-        // 二分法探到左侧底 再向上收集
+        // 持续压栈，直到遇到比起始值小的节点为止
         if (node.element.compareTo(start) > 0) {
             range(node.left, start, stop, limit, result);
         }
 
-        if (node.element.compareTo(start) >= 0 && (Objects.isNull(stop) || node.element.compareTo(stop) < 0)) {
-            if (result.size() == limit) return;
+        // 压栈结束，开始从最接近 起始值 的节点出栈，升序遍历收集
+        if (result.size() == limit) return;
+        if (node.element.compareTo(start) >= 0 && (nonstop || node.element.compareTo(stop) < 0)) {
             result.add(node.element);
         }
 
-        if (Objects.isNull(stop) || node.element.compareTo(stop) < 0) {
+        // 如果当前节点的值小于结束值，则继续搜索右子树
+        if (nonstop || node.element.compareTo(stop) < 0) {
             range(node.right, start, stop, limit, result);
         }
     }
@@ -350,6 +347,10 @@ public class BSTree<E extends Comparable<E>> implements Sorted<E> {
     protected int balanceFactor(Node<?> node) {
         if (node == null) return 0;
         return height(node.left) - height(node.right);
+    }
+
+    protected static int height(Node<?> node) {
+        return node == null ? -1 : node.height;
     }
 
     public boolean isBalanced() {
@@ -383,5 +384,25 @@ public class BSTree<E extends Comparable<E>> implements Sorted<E> {
     public int getHeight() {
         if (isEmpty()) return 0;
         return root.height;
+    }
+
+    protected static class Node<E extends Comparable<E>> {
+        /**
+         * “节点高度”是指从该节点到它的最远叶子节点的距离 即所经过的“边”的数量
+         * <p>
+         * 叶子节点的高度为 0
+         * 空节点的高度为 -1
+         */
+        int height;
+        Node<E> left, right;
+        E element;
+
+        public Node(E element) {
+            this.element = element;
+        }
+
+        public void refreshHeight() {
+            height = Math.max(height(left), height(right)) + 1;
+        }
     }
 }

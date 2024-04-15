@@ -88,4 +88,16 @@ public class AVLTree<E extends Comparable<E>> extends BSTree<E> {
         Node<E> eNode = super.delete(node, e);
         return balance(eNode);
     }
+
+    @Override
+    Node<E> deleteMin(Node<E> node, E[] result) {
+        Node<E> eNode = super.deleteMin(node, result);
+        return balance(eNode);
+    }
+
+    @Override
+    Node<E> deleteMax(Node<E> node, E[] result) {
+        Node<E> eNode = super.deleteMax(node, result);
+        return balance(eNode);
+    }
 }

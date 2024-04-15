@@ -1,11 +1,12 @@
 package data.structure;
 
-import data.structure.sorted.AVLTree;
-import data.structure.sorted.BSTree;
-import data.structure.sorted.SkipList;
+import data.structure.sorted.*;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static data.structure.utils.DST.sorted;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author no-today
@@ -26,5 +27,15 @@ class SortedTest {
     @Test
     void avlTree() {
         sorted(new AVLTree<>());
+    }
+
+    @Test
+    void tree23() {
+        sorted(new Tree23<>(), false);
+    }
+
+    @Test
+    void llrbTree() {
+        sorted(new LLRBTree<>(), false);
     }
 }
