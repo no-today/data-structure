@@ -250,8 +250,8 @@ public class HashMap<K, V> implements Map<K, V> {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("HashMap{");
-        foreach((e, i) -> sb.append(e.toString()).append(", "));
-        return sb.replace(sb.length() - 2, sb.length(), "").append("}").toString();
+        foreach((e, i) -> sb.append(e).append(i == size() - 1 ? "}" : ", "));
+        return sb.toString();
     }
 
     public int getResizeCount() {

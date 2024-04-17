@@ -1,6 +1,5 @@
 package data.structure.hash;
 
-import data.structure.Map;
 import data.structure.Set;
 
 import java.util.function.BiConsumer;
@@ -61,12 +60,5 @@ public class HashSet<E> implements Set<E> {
         E[] finalArr = arr;
         table.foreach((e, i) -> finalArr[i] = e.getKey());
         return finalArr;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("HashSet{");
-        foreach((e, i) -> sb.append((e instanceof Number || e instanceof Boolean || e instanceof Map.Entry) ? String.valueOf(e) : "\"" + e + "\"").append(", "));
-        return sb.replace(sb.length() - 2, sb.length(), "").append("}").toString();
     }
 }

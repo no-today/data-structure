@@ -299,25 +299,6 @@ public class SkipList<E extends Comparable<E>> implements Sorted<E> {
         return finalArr;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("[");
-
-        // 直接遍历底层就行
-        SkipListNode<E> cur = root.next[0];
-        while (cur != null) {
-            if (cur.next[0] == null) {
-                sb.append(cur.element);
-            } else {
-                sb.append(cur.element).append(", ");
-            }
-
-            cur = cur.next[0];
-        }
-
-        return sb.append("]").toString();
-    }
-
     /**
      * 在当前层寻找插入位置: 插入在返回节点的右侧(返回的结果必定比目标节点小)
      * <p>

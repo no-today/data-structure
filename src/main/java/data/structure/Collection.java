@@ -31,4 +31,10 @@ public interface Collection<E> {
     void foreach(BiConsumer<E, Integer> consumer);
 
     E[] toArray(E[] arr);
+
+    default String tostring() {
+        StringBuilder sb = new StringBuilder("[");
+        foreach((e, i) -> sb.append(e).append(i == size() - 1 ? "]" : ", "));
+        return sb.toString();
+    }
 }

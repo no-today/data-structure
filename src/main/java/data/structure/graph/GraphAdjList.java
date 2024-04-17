@@ -90,7 +90,13 @@ public class GraphAdjList<E> implements Graph<E> {
 
     @Override
     public void print() {
-        System.out.println("Ves\t\tRefs");
-        adjList.entrySet().foreach((e, i) -> System.out.printf("%s\t\t%s\n", e.getKey(), e.getValue()));
+        System.out.println(this);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Ves\t\tRefs\n");
+        adjList.entrySet().foreach((e, i) -> sb.append(e.getKey()).append("\t\t").append(e.getValue()).append("\n"));
+        return sb.toString();
     }
 }

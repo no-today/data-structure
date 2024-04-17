@@ -184,6 +184,11 @@ public class Tree23<E extends Comparable<E>> implements Sorted<E> {
     }
 
     @Override
+    public String toString() {
+        return tostring();
+    }
+
+    @Override
     public E min() {
         Node<E> minNode = findMinNode(root);
         if (minNode == null) return null;
@@ -606,42 +611,6 @@ public class Tree23<E extends Comparable<E>> implements Sorted<E> {
                 }
             }
         }
-
-        private E borrowMin() {
-            E borrowed;
-            if (!isLeaf()) {
-                borrowed = left.borrowMin();
-            } else {
-                borrowed = leftElement;
-                leftElement = null;
-
-                if (is3Node()) {
-                    leftElement = rightElement;
-                    rightElement = null;
-                }
-            }
-
-            rebalanced();
-            return borrowed;
-        }
-
-        private E borrowMax() {
-            E borrowed;
-            if (!isLeaf()) {
-                borrowed = right.borrowMax();
-            } else {
-                if (is3Node()) {
-                    borrowed = rightElement;
-                    rightElement = null;
-                } else {
-                    borrowed = leftElement;
-                    leftElement = null;
-                }
-            }
-
-            rebalanced();
-            return borrowed;
-        }
     }
 
     private static <E extends Comparable<E>> E leftMove(Node<E> node) {
@@ -708,157 +677,6 @@ public class Tree23<E extends Comparable<E>> implements Sorted<E> {
         // 叶子节点必须重新平衡一次
         // 若都是2节点的情况下会压缩层高，对此子级已经无能为力
         cur.rebalanced();
-
-        if (!cur.isLeaf()) {
-            int balanced = 0;
-            while (balanced++ >= 0) {
-                if (cur.is3Node()) {
-                    // 左孩子发生了坍塌
-                    if (cur.left.isLeaf() && !cur.mid.isLeaf()) {
-                        // 从右侧最邻近的兄弟借最小值
-                        E borrowed = cur.mid.borrowMin();
-                        E readdition = cur.leftElement;
-
-                        // 借来的最小值顶替当前节点的左元素
-                        cur.leftElement = borrowed;
-
-                        // 当前元素则重新添加一次, 会使底下坍塌的节点重新展开
-                        cur.left = insert(cur, readdition, false);
-                    }
-                    // 中间孩子发生了坍塌
-                    else if (cur.mid.isLeaf() && !cur.right.isLeaf()) {
-                        E borrowed = cur.right.borrowMin();
-                        E readdition = cur.rightElement;
-
-                        cur.rightElement = borrowed;
-                        cur.mid = insert(cur, readdition, false);
-                    }
-                    // 右孩子发生了坍塌
-                    else if (!cur.mid.isLeaf() && cur.right.isLeaf()) {
-                        E borrowed = cur.mid.borrowMax();
-                        E readdition = cur.rightElement;
-
-                        if (cur.mid.isLeaf()) {
-                            cur.rightElement = borrowed;
-                            cur.right = insert(cur, readdition, false);
-
-                            borrowed = cur.mid.borrowMax();
-                            readdition = cur.rightElement;
-
-                            cur.rightElement = borrowed;
-                            insert(cur, readdition, true);
-
-                            borrowed = cur.mid.borrowMax();
-                            readdition = cur.rightElement;
-
-                            cur.rightElement = borrowed;
-                            insert(cur, readdition, true);
-                            insert(cur, cur.rightElement, true);
-                            cur.rightElement = null;
-
-                            cur.mid = null;
-                            continue;
-                        }
-
-                        /*
-                         *     5   ,   9
-                         *    /    |    \
-                         *   3     7   10,11
-                         *  / \   / \
-                         * 2   4 6   8
-                         *
-                         *      5   ,   9
-                         *     /    |    \
-                         *    3    6,7  10,11
-                         *   / \
-                         *  2   4
-                         *
-                         *     5   ,   8
-                         *    /    |    \
-                         *   3    6,7    10
-                         *  / \          / \
-                         * 2   4        9   11
-                         *
-                         *     5   ,   7
-                         *    /    |    \
-                         *   3     6     10
-                         *  / \          / \
-                         * 2   4       8,9   11
-                         *
-                         *     5   ,   6
-                         *    /         \
-                         *   3           10
-                         *  / \          / \
-                         * 2   4      7,8,9   11
-                         *
-                         *      5
-                         *    /   \
-                         *   3     8,10
-                         *  / \   /  |  \
-                         * 2   4 6,7 9   11
-                         */
-                        cur.rightElement = borrowed;
-                        cur.right = insert(cur, readdition, false);
-                    } else balanced = -1;
-                } else {
-                    // 左孩子发生了坍塌
-                    if (cur.left.isLeaf() && !cur.right.isLeaf()) {
-                        E borrowed = cur.right.borrowMin();
-
-                        /*
-                         *    4                5                  4
-                         *   / \              / \                / \
-                         * 2,3  6    --->    3  6,7    --->    2,3  6    --->   ...
-                         *     / \          / \                    / \
-                         *    5   7        2   4                  5   7
-                         *
-                         *    4,6
-                         *   / | \
-                         * 2,3 5  7
-                         */
-                        if (cur.right.isLeaf()) {
-                            cur.mid = new Node<>(borrowed);
-                            cur.rightElement = cur.right.borrowMin();
-                            continue;
-                        }
-
-                        E readdition = cur.leftElement;
-
-                        cur.leftElement = borrowed;
-                        cur.left = insert(cur, readdition, false);
-                    }
-                    // 右孩子发生了坍塌
-                    else if (!cur.right.isLeaf() && cur.left.isLeaf()) {
-                        E borrowed = cur.left.borrowMax();
-
-                        /*
-                         *     5                  4
-                         *    / \                / \
-                         *   3  6,7    --->    2,3  6
-                         *  / \                    / \
-                         * 2   4                  5   7
-                         *
-                         *   3,5
-                         *  / | \
-                         * 2  4 6,7
-                         */
-                        if (cur.left.isLeaf()) {
-                            cur.mid = new Node<>(borrowed);
-                            cur.rightElement = cur.leftElement;
-                            cur.leftElement = cur.left.borrowMax();
-                            continue;
-                        }
-
-                        E readdition = cur.leftElement;
-
-                        cur.leftElement = borrowed;
-                        cur.right = insert(cur, readdition, false);
-                    } else balanced = -1;
-                }
-
-                if (balanced > 10) throw new RuntimeException();
-            }
-        }
 
         return min;
     }

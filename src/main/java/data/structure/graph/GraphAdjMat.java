@@ -127,31 +127,39 @@ public class GraphAdjMat<E> implements Graph<E> {
 
     @Override
     public void print() {
-        System.out.println("Vertices with index:");
-        System.out.print("Ves\t");
-        for (int i = 0; i < vertices.size(); i++) {
-            System.out.print(vertices.get(i));
-            if (i < vertices.size() - 1) System.out.print("\t");
-        }
-        System.out.println();
+        System.out.println(this);
+    }
 
-        System.out.print("Idx\t");
-        for (int i = 0; i < adjMat.size(); i++) {
-            System.out.print(i);
-            if (i < adjMat.size() - 1) System.out.print("\t");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Vertices with index:\n");
+        sb.append("Ves\t");
+
+        for (int i = 0; i < vertices.size(); i++) {
+            sb.append(vertices.get(i));
+            if (i < vertices.size() - 1) sb.append("\t");
         }
-        System.out.println();
+        sb.append("\n");
+
+        sb.append("Idx\t");
+        for (int i = 0; i < adjMat.size(); i++) {
+            sb.append(i);
+            if (i < adjMat.size() - 1) sb.append("\t");
+        }
+        sb.append("\n");
 
         for (int i = 0; i < size(); i++) {
-            System.out.print(i + "\t");
+            sb.append(i).append("\t");
 
             List<Integer> rows = adjMat.get(i);
             for (int j = 0; j < rows.size(); j++) {
                 Integer cols = rows.get(j);
-                System.out.print(cols);
-                if (j < rows.size() - 1) System.out.print("\t");
+                sb.append(cols);
+                if (j < rows.size() - 1) sb.append("\t");
             }
-            System.out.println();
+            sb.append("\n");
         }
+
+        return sb.toString();
     }
 }

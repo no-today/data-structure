@@ -68,9 +68,4 @@ public class LinkedQueue<E> implements Queue<E> {
     public void clear() {
         linkedList.clear();
     }
-
-    @Override
-    public String toString() {
-        return linkedList.toString();
-    }
 }
